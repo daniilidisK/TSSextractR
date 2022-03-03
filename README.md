@@ -1,4 +1,4 @@
 # TSS-findR
-An R/Shinny Package for Bacterial TSS extraction, using Cappable-seq.
+An R/Shiny Package for Bacterial TSS extraction, using Cappable-seq.
 
 ...
