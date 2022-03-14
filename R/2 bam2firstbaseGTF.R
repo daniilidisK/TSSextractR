@@ -124,5 +124,5 @@ TSSenriched <- GTF %>%
   filter(ratio > controlCuttoff) %>%
   select(-chr.y)
 
-write.csv(TSSenriched, "../data/TSSenriched.csv")
+write.csv(TSSenriched, "./TSSenriched.csv")
 rm(GTF, GTFcontrol)
