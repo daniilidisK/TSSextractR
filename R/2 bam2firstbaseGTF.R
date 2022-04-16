@@ -1,66 +1,61 @@
 library(Rsamtools)
-library(stringr)
 library(bedr)
 library(dplyr)
 library(tidyverse)
-library(parallel)
 
-options(srapply_fapply="parallel", mc.cores=8)
 setwd("./")
+
+scanBamfile <- function(libType, bamFile) {
+  if (libType == "FR") {
+    # For Pair-end sequencing and for Forward - Reverse order
+    flag <- scanBamFlag(isFirstMateRead = TRUE)
+    param <- ScanBamParam(what = scanBamWhat(), flag = flag)
+    newBam <- scanBam(bamFile, bamFile$path, param = param)
+    
+    return(newBam)
+  } else if (libType == "RF") {
+    # For Pair-end sequencing and for Reverse - Forward order
+    flag <- scanBamFlag(isSecondMateRead = TRUE)
+    param <- ScanBamParam(what = scanBamWhat(), flag = flag)
+    newBam <- scanBam(bamFile, bamFile$path, param = param)
+    
+    return(newBam)
+  } else if (!libType == "F") {
+    return(0)
+  }
+}
+
 
 # ------- Enriched Sample -------
 bamFile <- BamFile("./Enriched/Replicate1_enriched_R1_001.out_572a18402e95.bam")
-bamBasename <- basename(bamFile$path)
-bamWoutSuffix <- str_match(bamBasename, "(.*)\\.bam")[,2]
+bamWoutSuffix <- str_match(basename(bamFile$path), "(.*)\\.bam")[,2]
 
 libType = "F"
-cuttoff = 1.5
 
-if (libType == "FR") {
-  # For Pair-end sequencing and for Forward - Reverse order
-  flag <- scanBamFlag(isFirstMateRead = TRUE)
-  param <- ScanBamParam(what = scanBamWhat(), flag = flag)
-  newBam <- scanBam(bamFile, bamFile$path, param = param)
-} else if (libType == "RF") {
-  # For Pair-end sequencing and for Reverse - Forward order
-  flag <- scanBamFlag(isSecondMateRead = TRUE)
-  param <- ScanBamParam(what = scanBamWhat(), flag = flag)
-  newBam <- scanBam(bamFile, bamFile$path, param = param)
-}
+# cuttoff = 1.5
 
-# Get Mapped Reads
-mappedRds <- countBam(bamFile, param = ScanBamParam(what = scanBamWhat(), flag = scanBamFlag(isUnmappedQuery = FALSE)))
-print(mappedRds$records)
+# -- Bam -> BED --
+bed <- bedr(engine = "bedtools", method = "bamtobed -i", input = list(bamFile$path))
 
-# Bam -> BED
-bed <- bedr(engine = "bedtools", method = "bamtobed -cigar -i", input = list(bamFile$path))
-
-newgtf <- data.frame(matrix(NA, nrow = nrow(bed), ncol = 3))
-newgtf <- as.list(newgtf)
-for (i in 1:nrow(bed)) {
-  if (bed[i, 6] == "+") {
-    newgtf$X1[i] = "ENA|U00096|U00096.2" #bed[i, 1]
-    newgtf$X2[i] = bed[i, 2]
-    newgtf$X3[i] = "+"
-  } else if (bed[i, 6] == "-") {
-    newgtf$X1[i] = "ENA|U00096|U00096.2" #bed[i, 1]
-    newgtf$X2[i] = bed[i, 3]
-    newgtf$X3[i] = "-"
+newgtf <- rep(as.integer(0), nrow(bed))
+nrows <- nrow(bed)
+for (i in seq_len(nrows)) {
+  if (bed$V6[i] == "+") {
+    newgtf[i] <- bed$V2[i]
+  } else {
+    newgtf[i] <- bed$V3[i]
   }
 }
-newgtf <- as.data.frame(newgtf)
 
+newgtf <- data.frame(chr = bed$V1, start = newgtf, strand = bed$V6)
 rm(bed)
 
-newgtf <- data.frame(chr = newgtf[,1], start = as.numeric(newgtf[,2]), strand = newgtf[,3])
-
-GTF <- newgtf %>%
+newgtf <- newgtf %>%
   group_by(chr, start, strand) %>%
-  summarise(iterations = n(), RRS = iterations*10^6/mappedRds$records) %>%
-  filter(RRS >= cuttoff)
+  summarise(iterations = n(), RRS = iterations*10^6/nrows)
+  #filter(RRS >= cuttoff)
 
-rm(newgtf)
-
+gc()
 # ------- Control Sample -------
 bamControl <- BamFile("./Control/Replicate1_control_R1_001.out_1976ee3be28621.bam")
 controlBasename <- basename(bamControl$path)
@@ -69,60 +64,38 @@ controlWoutSuffix <- str_match(controlBasename, "(.*)\\.bam")[,2]
 controlLibType = "F"
 controlCuttoff = 0
 
-if (controlLibType == "FR") {
-  # For Pair-end sequencing and for Forward - Reverse order
-  flagControl <- scanBamFlag(isFirstMateRead = TRUE)
-  paramControl <- ScanBamParam(what = scanBamWhat(), flag = flagControl)
-  newBamControl <- scanBam(bamControl, bamControl$path, param = paramControl)
-} else if (controlLibType == "RF") {
-  # For Pair-end sequencing and for Reverse - Forward order
-  flagControl <- scanBamFlag(isSecondMateRead = TRUE)
-  paramControl <- ScanBamParam(what = scanBamWhat(), flag = flagControl)
-  newBamControl <- scanBam(bamControl, bamControl$path, param = paramControl)
-}
-
-# Get Mapped Reads
-mappedRdsControl <- countBam(bamControl$path, param = ScanBamParam(what = scanBamWhat(),
-                                          flag = scanBamFlag(isUnmappedQuery = FALSE)))
-print(mappedRdsControl$records)
-
 # Bam -> BED
-bedControl <- bedr(engine = "bedtools", method = "bamtobed -cigar -i", input = list(bamControl$path))
+bedControl <- bedr(engine = "bedtools", method = "bamtobed -i", input = list(bamControl$path))
 
-newgtfControl <- data.frame(matrix(NA, nrow = nrow(bedControl), ncol = 3))
-newgtfControl <- as.list(newgtfControl)
-#newgtfControl <- matrix(NA, nrow = nrow(bedControl), ncol = 3)
-for (i in 1:nrow(bedControl)) {
-  if (bedControl[i, 6] == "+") {
-    newgtfControl$X1[i] = "ENA|U00096|U00096.2" #bedControl[i, 1]
-    newgtfControl$X2[i] = bedControl[i, 2]
-    newgtfControl$X3[i] = "+"
-  } else if (bedControl[i, 6] == "-") {
-    newgtfControl$X1[i] = "ENA|U00096|U00096.2" #bedControl[i, 1]
-    newgtfControl$X2[i] = bedControl[i, 3]
-    newgtfControl$X3[i] = "-"
+
+newgtfControl <- rep(as.integer(0), nrow(bedControl))
+nrows <- nrow(bedControl)
+for (i in seq_len(nrows)) {
+  if (bedControl$V6[i] == "+") {
+    newgtfControl[i] <- bedControl$V2[i]
+  } else {
+    newgtfControl[i] <- bedControl$V3[i]
   }
 }
-newgtfControl <- as.data.frame(newgtfControl)
 
+newgtfControl <- data.frame(chr = bedControl$V1, start = newgtfControl, strand = bedControl$V6)
 rm(bedControl)
 
-newgtfControl <- data.frame(chr = newgtfControl$X1, start = as.numeric(newgtfControl$X2), strand = newgtfControl$X3)
-
-GTFcontrol <- newgtfControl %>%
+newgtfControl <- newgtfControl %>%
   group_by(chr, start, strand) %>%
-  summarise(iterations = n(), RRS = iterations*10^6/mappedRdsControl$records) %>%
-  filter(RRS >= controlCuttoff)
-
-rm(newgtfControl)
+  summarise(iterations = n(), RRS = iterations*10^6/nrows)
+  #filter(RRS >= controlCuttoff)
+gc()
 
 # ------- Compare TSS between Enriched and Control Samples -------
-TSSenriched <- GTF %>%
-  full_join(GTFcontrol, by = c("start", "strand")) %>%
-  mutate_at(vars(RRS.y), ~replace_na(., 10^6/mappedRdsControl$records)) %>%
+TSSenriched <- newgtf %>%
+  full_join(newgtfControl, by = c("start", "strand")) %>%
+  mutate_at(vars(iterations.y, RRS.y), ~replace(., is.na(.), 0)) %>%
   mutate(ratio = log2(RRS.x/RRS.y)) %>%
-  filter(ratio > controlCuttoff) %>%
+  #filter(ratio > controlCuttoff) %>%
+  filter(!is.na(iterations.x)) %>%
   select(-chr.y)
 
-write.csv(TSSenriched, "./TSSenriched.csv")
-rm(GTF, GTFcontrol)
+rm(newgtf, newgtfControl, nrows)
+
+# write.csv(TSSenriched, "./TSSenriched.csv")

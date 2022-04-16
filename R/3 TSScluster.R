@@ -1,43 +1,43 @@
 library(dplyr)
 library(tidyr)
+library(Rcpp)
 
 cutoff <- 5
+TSSenriched$start <- ifelse(TSSenriched$strand == "+", TSSenriched$start + 1, TSSenriched$start)
 
-TSSclustered <- TSSenriched
-TSSclustered$start <- ifelse(TSSclustered$strand == "+", TSSclustered$start + 1, TSSclustered$start)
-
-TSSclustered <- TSSclustered %>%
+TSSenriched <- TSSenriched %>%
   arrange(strand, start)
 
 clusters <- c()
 j <- 1
-for (i in 1:(nrow(TSSclustered)-1)) {
-  if ((TSSclustered$start[i+1] - TSSclustered$start[i] <= cutoff + 1) && TSSclustered$strand[i+1] == TSSclustered$strand[i]) {
+k <- 1
+nrows <- nrow(TSSenriched)
+for (i in seq_len(nrows-1)) {
+  if ((TSSenriched$start[i+1] - TSSenriched$start[i] <= cutoff + 1) && TSSenriched$strand[i+1] == TSSenriched$strand[i]) {
     j <- j + 1
   } else {
-    clusters <- c(clusters, j)
+    clusters[k] <- j
+    k <- k + 1
     j <- 1
-    if (i == nrow(TSSclustered)-1) {
-      clusters <- c(clusters, 1)
-    }
+    if (i == nrows-1) clusters[k] <- 1
   }
 }
-clusters <- as.data.frame(clusters)
 
-TSSfinal <- data.frame()
 prev <- 0
 nxt <- 0
 i <- 1
-while (nxt < nrow(TSSclustered)) {
+TSSstart <- c()
+while (nxt < nrows) {
   prev <- nxt + 1
-  nxt <- nxt + clusters$clusters[i]
+  nxt <- nxt + clusters[i]
   
-  maxIter <- max(TSSclustered$iterations.x[prev:nxt])
-  maxIterIndex <- which.max(TSSclustered$iterations.x[prev:nxt])
+  maxIterIndex <- which.max(TSSenriched$iterations.x[prev:nxt])
+  TSSstart[i] <- prev + maxIterIndex - 1
   
-  TSSfinal <- rbind(TSSfinal, TSSclustered[TSSclustered$iterations.x == maxIter &
-                 TSSclustered$start==TSSclustered$start[prev - 1 + maxIterIndex],])
   i <- i + 1
 }
 
-               
+TSSfinal <- TSSenriched[TSSstart,]
+
+rm(clusters, TSSstart, TSSenriched, prev, nxt, maxIterIndex, i, j, k, nrows)
+gc()

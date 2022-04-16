@@ -15,24 +15,24 @@ library(parallel)
 setwd("./")
 
 # Assign the necessary variables
-cl <- makeCluster(9)
+cl <- makeCluster(detectCores()/2)
 fastqFile <- "./Control/Replicate1_control_R1_001.fastq.gz"
-adapter <= "AGATCGGAAGAGCACACGTCTGAACTCCAGTCAC"
+adapter <- "AGATCGGAAGAGCACACGTCTGAACTCCAGTCAC"
 minLength <- 26
 refGenome <- "./U00096.2.fasta" # "BSgenome.Ecoli.NCBI.20080805"
-aligner = "Rbowtie"
+aligner <- "Rbowtie"
 isPared <- FALSE
 
 
 # Trim Adapters, Align with Reference Genome and Measure Quality for 1 fastQ file
 trimAlignAndQuality <- function(fastq = fastqFile, adapter = adapter, minLength = minLength,
-                                refGenome = refGenome, aligner = aligner, isPaired = isPaired) {
+                                refGenome = refGenome, aligner = aligner, complexity = 0.4, isPaired = isPaired) {
   fastqBasename <- basename(fastqFile)
   fastqWoutSuffix <- str_match(fastqBasename, "(.*)\\.fastq.gz")[,2]
   
   preprocessReads(filename = fastqFile,
                   outputFilename = paste(dirname(fastqFile), "/", fastqWoutSuffix, ".out.fastq.gz", sep = ""),
-                  Rpattern = adapter,
+                  Rpattern = adapter, complexity = complexity,
                   minLength = minLength, nrec = 1000000L, clObj = cl)
   
   tmpfile <- tempfile(pattern = "alignfile", tmpdir = tempdir(), fileext = "")
@@ -49,10 +49,10 @@ trimAlignAndQuality <- function(fastq = fastqFile, adapter = adapter, minLength 
   qQCReport(proj, pdfFilename = paste(dirname(fastqFile), "/quality_report.pdf", sep = ""), clObj = cl)
   
   alignmentStats(proj)
+  gc()
 }
 
 
 trimAlignAndQuality(fastq = fastqFile, adapter = adapter, 
                     minLength = minLength, refGenome = refGenome, 
-                    aligner = aligner,isPaired = isPaired)
-
+                    aligner = aligner, complexity = 0.4, isPaired = isPaired)
