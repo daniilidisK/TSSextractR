@@ -1,2 +1,0 @@
-FileName	SampleName
-./Control/Replicate1_control_R1_001.out.fastq.gz	Sample1
