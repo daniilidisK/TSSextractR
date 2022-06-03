@@ -1,0 +1,557 @@
+argV	tRNA-Arg(ACG)
+glyV	tRNA-Gly(GCC)
+naRNA6	naRNA6
+valW	tRNA-Val(GAC)
+rdlA	putative antisense regulatory RNA RdlA
+valT	tRNA-Val(UAC)
+alaT	L-alanyl-tRNAalaT
+bhsB	small RNA BhsB
+valX	tRNA-Val(UAC)
+naRNA3	naRNA3
+valU	tRNA-Val(UAC)
+isrC	CP4-44 prophage; small RNA IsrC
+valY	tRNA-Val(UAC)
+uhpU	small RNA UhpU
+valV	tRNA-Val(GAC)
+ryeG	small RNA RyeG
+valZ	tRNA-Val(UAC)
+ryjA	small RNA RyjA
+tyrU	tRNA-Tyr(GUA)
+flgO	small RNA FlgO
+tyrV	tRNA-Tyr(GUA)
+esrE	small RNA EsrE
+tyrT	tRNA-Tyr(GUA)
+cysT	tRNA-Cys(GCA)
+sibA	small RNA SibA
+spf	small regulatory RNA Spot 42
+thrV	tRNA-Thr(GGU)
+C0293	e14 prophage; small regulatory RNA C0293
+ipeX	small RNA IpeX
+symR	small regulatory RNA antitoxin SymR
+thrW	tRNA-Thr(CGU)
+micF	small regulatory RNA MicF
+sokX	small RNA SokX
+ryfA	small regulatory RNA RyfA
+rrlH	23S ribosomal RNA
+thrT	tRNA-Thr(GGU)
+pspH	small regulatory RNA PspH
+rnpB	RNase P catalytic RNA component
+rrlD	23S ribosomal RNA
+ohsC	small regulatory RNA OhsC
+rrlA	23S ribosomal RNA
+thrU	tRNA-Thr(UGU)
+gcvB	small regulatory RNA GcvB
+sroA	small RNA SroA
+rrlE	23S ribosomal RNA
+sdsR	small regulatory RNA SdsR
+rrlB	23S ribosomal RNA
+lysV	tRNA-Lys(UUU)
+cpxQ	small regulatory RNA CpxQ
+rttR	small RNA RttR
+rrlG	23S ribosomal RNA
+istR	small regulatory RNA IstR-1
+rrlC	23S ribosomal RNA
+lysZ	tRNA-Lys(UUU)
+csrC	small regulatory RNA CsrC
+kilS	Rac prophage; small RNA KilS
+gltU	tRNA-Glu(UUC)
+glmY	small regulatory RNA GlmY
+rrsD	16S ribosomal RNA
+lysW	tRNA-Lys(UUU)
+rprA	small regulatory RNA RprA
+naRNA4	naRNA4
+gltV	tRNA-Glu(UUC)
+rrsA	16S ribosomal RNA
+ralA	Rac prophage; small regulatory RNA antitoxin RalA
+rrsE	16S ribosomal RNA
+lysQ	tRNA-Lys(UUU)
+rdlC	putative antisense regulatory RNA RdlC
+sroE	small RNA SroE
+gltW	tRNA-Glu(UUC)
+rrsB	16S ribosomal RNA
+ssrS	6S RNA
+rrsG	16S ribosomal RNA
+lysT	tRNA-Lys(UUU)
+arcZ	small regulatory RNA ArcZ
+aceK-int	small RNA AceK-int
+gltT	tRNA-Glu(UUC)
+rrsC	16S ribosomal RNA
+ftsO	small regulatory RNA FtsO
+ssrA	tmRNA
+rrsH	16S ribosomal RNA
+lysY	tRNA-Lys(UUU)
+sdsN	small regulatory RNA SdsN
+naRNA1	naRNA1
+sroC	small regulatory RNA SroC
+micA	small regulatory RNA MicA
+tff	putative small RNA T44
+malH	small regulatory RNA MalH
+rrfG	5S ribosomal RNA
+mgrR	small regulatory RNA MgrR
+fliX	small RNA FliX
+glnW	tRNA-Gln(UUG)
+rrfD	5S ribosomal RNA
+oxyS	small regulatory RNA OxyS
+rrfA	5S ribosomal RNA
+omrB	small regulatory RNA OmrB
+nc1	small noncoding RNA involved in nucleoid organization
+glnX	tRNA-Gln(CUG)
+rrfH	5S ribosomal RNA
+sdhX	small regulatory RNA SdhX
+rrfE	5S ribosomal RNA
+ryfD	small regulatory RNA RyfD
+sraA	small RNA SraA
+glnU	tRNA-Gln(UUG)
+rrfB	5S ribosomal RNA
+mcaS	small regulatory RNA McaS
+rrfF	5S ribosomal RNA
+sibB	small RNA SibB
+timR	putative small regulatory RNA TimR
+glnV	tRNA-Gln(CUG)
+rrfC	5S ribosomal RNA
+rirA	small regulatory RNA RirA
+rseX	small regulatory RNA RseX
+eyeA	CP4-6 prophage; small RNA EyeA
+dicF	Qin prophage; small regulatory RNA DicF
+micC	small regulatory RNA MicC
+rybA	small RNA RybA
+rybB	small regulatory RNA RybB
+micL	small regulatory RNA MicL-S
+orzP	small RNA OrzP
+sokB	putative small regulatory RNA antitoxin SokB
+sibD	small RNA SibD
+istR	small RNA IstR-2
+ryhB	small regulatory RNA RyhB
+zbiJ	small regulatory RNA ZbiJ
+xylZ	small RNA XylZ
+och5	small regulatory RNA Och5
+sokC	small regulatory RNA antitoxin SokC
+leuZ	tRNA-Leu(UAA)
+naRNA5	naRNA5
+omrA	small regulatory RNA OmrA
+chiZ	small regulatory RNA ChiZ
+leuV	tRNA-Leu(CAG)
+sroH	small RNA SroH
+serX	tRNA-Ser(GGA)
+fnrS	small regulatory RNA FnrS
+rdlD	antisense regulatory RNA RdlD
+leuQ	tRNA-Leu(CAG)
+serU	tRNA-Ser(CGA)
+sibC	small regulatory RNA antitoxin SibC
+rbsZ	small regulatory RNA RbsZ
+leuW	tRNA-Leu(UAG)
+serV	tRNA-Ser(GCU)
+sibE	small RNA SibE
+gadY	small regulatory RNA GadY
+leuT	tRNA-Leu(CAG)
+serW	tRNA-Ser(GGA)
+hisR	tRNA-His(GUG)
+cyaR	small regulatory RNA CyaR
+gadF	small regulatory RNA GadF
+leuX	tRNA-Leu(CAA)
+serT	tRNA-Ser(UGA)
+rydC	small regulatory RNA RydC
+dsrA	small regulatory RNA DsrA
+leuU	tRNA-Leu(GAG)
+selC	tRNA-Sec(UCA)
+rydB	small regulatory RNA RydB
+3'ETS-<i>leuZ</i>	small regulatory RNA 3'ETSleuZ
+leuP	tRNA-Leu(CAG)
+sgrS	small regulatory RNA SgrS
+ileU	tRNA-Ile(GAU)
+csrB	small regulatory RNA CsrB
+glmZ	small regulatory RNA GlmZ
+ileV	tRNA-Ile(GAU)
+aspX	small regulatory RNA AspX
+agrB	small regulatory RNA AgrB
+ileY	tRNA-Ile(CAU)
+rdlB	putative antisense regulatory RNA RdlB
+pheU	tRNA-Phe(GAA)
+sraG	small regulatory RNA SraG
+ileX	tRNA-Ile(CAU)
+ispZ	small regulatory RNA IspZ
+pheV	tRNA-Phe(GAA)
+arrS	small regulatory RNA ArrS
+ileT	tRNA-Ile(GAU)
+chiX	small regulatory RNA ChiX
+alaT	tRNA-Ala(UGC)
+alaX	tRNA-Ala(GGC)
+metY	tRNA-initiator Met(CAU)
+alaU	tRNA-Ala(UGC)
+alaV	tRNA-Ala(UGC)
+metZ	tRNA-initiator Met(CAU)
+alaW	tRNA-Ala(GGC)
+allZ	small RNA AllZ
+metV	tRNA-initiator Met(CAU)
+naRNA2	naRNA2
+metW	tRNA-initiator Met(CAU)
+metU	tRNA-Met(CAU)
+ffs	signal recognition particle 4.5S RNA
+metT	tRNA-Met(CAU)
+motR	small RNA MotR
+agrA	small RNA AgrA
+aspU	tRNA-Asp(GUC)
+aspV	tRNA-Asp(GUC)
+sraB	small RNA SraB
+aspT	tRNA-Asp(GUC)
+asnV	tRNA-Asn(GUU)
+narS	putative small regulatory RNA NarS
+asnW	tRNA-Asn(GUU)
+asnT	tRNA-Asn(GUU)
+glyW	tRNA-Gly(GCC)
+G0-10706	small RNA
+asnU	tRNA-Asn(GUU)
+trpT	tRNA-Trp(CCA)
+glyT	tRNA-Gly(UCC)
+ryeA	small antisense RNA RyeA
+argZ	tRNA-Arg(ACG)
+glyX	tRNA-Gly(GCC)
+raiZ	small RNA RaiZ
+proM	tRNA-Pro(UGG)
+argW	tRNA-Arg(CCU)
+argQ	tRNA-Arg(ACG)
+glyU	tRNA-Gly(CCC)
+ryjB	small RNA RyjB
+proK	tRNA-Pro(CGG)
+argX	tRNA-Arg(CCG)
+argU	tRNA-Arg(UCU)
+glyY	tRNA-Gly(GCC)
+sokE	small RNA SokE
+proL	tRNA-Pro(GGG)
+argY	tRNA-Arg(ACG)
+	L-alanyl-tRNAalaX
+	L-alanyl-tRNAalaU
+	L-alanyl-tRNAalaV
+	L-alanyl-tRNAalaW
+	L-methionyl-tRNAmetT
+	L-methionyl-tRNAmetU
+	L-isoleucyl-tRNAileV
+	L-isoleucyl-tRNAileY
+	L-isoleucyl-tRNAileX
+	L-isoleucyl-tRNAileT
+	L-isoleucyl-tRNAileU
+	L-glutaminyl-tRNAglnV
+	L-glutaminyl-tRNAglnW
+	L-glutaminyl-tRNAglnX
+	L-glutaminyl-tRNAglnU
+	L-tryptophanyl-tRNAtrpT
+	L-arginyl-tRNAargU
+	L-arginyl-tRNAargY
+	N-formyl-L-methionyl-tRNAmetW
+	L-arginyl-tRNAargV
+	L-arginyl-tRNAargZ
+	N-formyl-L-methionyl-tRNAmetY
+	L-arginyl-tRNAargW
+	N-formyl-L-methionyl-tRNAmetZ
+	L-arginyl-tRNAargQ
+	L-arginyl-tRNAargX
+	N-formyl-L-methionyl-tRNAmetV
+	L-phenylalanyl-tRNApheU
+	L-phenylalanyl-tRNApheV
+	L-methionyl-tRNAmetZ
+	L-methionyl-tRNAmetW
+	L-methionyl-tRNAmetV
+	L-methionyl-tRNAmetY
+	L-leucyl-tRNAleuQ
+	L-leucyl-tRNAleuW
+	L-leucyl-tRNAleuT
+	L-leucyl-tRNAleuX
+	L-leucyl-tRNAleuU
+	L-leucyl-tRNAleuP
+	L-leucyl-tRNAleuZ
+	L-leucyl-tRNAleuV
+	glycyl-tRNAglyV
+	glycyl-tRNAglyW
+	glycyl-tRNAglyT
+	glycyl-tRNAglyX
+	glycyl-tRNAglyU
+	glycyl-tRNAglyY
+	L-tyrosyl-tRNAtyrV
+	L-tyrosyl-tRNAtyrT
+	L-tyrosyl-tRNAtyrU
+	L-asparaginyl-tRNAasnT
+	L-asparaginyl-tRNAasnU
+	L-asparaginyl-tRNAasnV
+	L-asparaginyl-tRNAasnW
+	L-seryl-tRNAserV
+	L-seryl-tRNAserW
+	L-seryl-tRNAserT
+	L-seryl-tRNAserX
+	L-seryl-tRNAserU
+	L-prolyl-tRNAproM
+	L-prolyl-tRNAproK
+	L-prolyl-tRNAproL
+	L-seryl-tRNAsec
+	L-lysyl-tRNAlysV
+	L-lysyl-tRNAlysZ
+	L-lysyl-tRNAlysW
+	L-lysyl-tRNAlysQ
+	L-lysyl-tRNAlysT
+	L-lysyl-tRNAlysY
+	L-histidyl-tRNAhisR
+	L-valyl-tRNAvalU
+	lysidine-modified tRNAileX
+	L-valyl-tRNAvalY
+	L-valyl-tRNAvalV
+	L-valyl-tRNAvalZ
+	L-glutamyl-tRNAgltV
+	L-valyl-tRNAvalW
+	L-glutamyl-tRNAgltW
+	L-valyl-tRNAvalT
+	L-glutamyl-tRNAgltT
+	L-valyl-tRNAvalX
+	L-glutamyl-tRNAgltU
+	L-cysteinyl-tRNAcysT
+	tRNA
+	tRNA guanine
+	tRNA queuine
+	D-tyrosyl-tRNATyr
+	L-aspartyl-tRNAaspV
+	L-aspartyl-tRNAaspT
+	L-aspartyl-tRNAaspU
+	L-threonyl-tRNAthrW
+	L-threonyl-tRNAthrT
+	L-threonyl-tRNAthrU
+	L-threonyl-tRNAthrV
+	a tRNA precursor
+	a L-methionylaminoacyl-tRNA
+	a 5'-hydroxy-guanosine-3'-[RNA]
+	RNase E degradation substrate mRNA
+	an L-threonyl-[tRNAThr]
+	mature tRNA
+	'activated' tRNA
+	RNase R degradation substrate mRNA
+	an uncharged tRNA
+	an L-alanyl-[tRNAAla]
+	tRNA containing a thionucleotide
+	a 5'-triphospho-purine-[mRNA]
+	RNase G degradation substrate mRNA
+	an L-pyrrolysyl-[tRNAPyl]
+	a tRNA intron with a 2',3'-cyclic phosphate and a 5'-hydroxyl terminus
+	a diphospho-5'-purine-3'-[mRNA]
+	YhaV endonuclease degradation substrate mRNA
+	an L-aspartyl-[tRNAAsx]
+	RNase II degradation substrate mRNA
+	an L-lysyl-[tRNApyl]
+	an L-glutamyl-[tRNAGln]
+	a 5'-hydroxy-guanosine-3'-[28S-rRNA]
+	a [pre-mRNA] containing guanosine-adenosine pair
+	an L-methionyl-[elongator tRNAMet]
+	a tRNAMet
+	a 5-phosphooxy-L-glutamyl-[tRNAGln]
+	a 5'-hydroxy-guanosine-3'-[pre-mRNA]
+	RNase E mRNA processing substrate
+	an L-glutamyl-[tRNAGlx]
+	a tRNAIle
+	an L-glutamyl-[tRNAGlu]
+	RNase G mRNA processing substrate
+	an L-isoleucyl-[tRNAIle]
+	a tRNAGlx
+	a 5'-phospho-adenosine-[RNA]
+	RNase III mRNA processing substrate
+	an L-cysteinyl-[tRNAPro]
+	a tRNATyr
+	5'-phospho-ribonucleotide-[tRNAHis]
+	a 28S rRNA fragments
+	an RNase product with a 3' phosphate
+	a D-aspartyl-[tRNAasp]
+	an L-glutaminyl-[tRNAGln]
+	a tRNAArg
+	a 5' diphospho-[mRNA]
+	a [28S-rRNA] containing guanosine-adenosine pair
+	RNase E processing product mRNA
+	a D-tyrosyl-[tRNATyr]
+	an L-tryptophanyl-[tRNATrp]
+	23S ribosomal RNA methylated at position G2251
+	a tRNAser
+	a 5'-(N7-methyl 5'-triphosphoguanosine)-(ribonucleotide)-[mRNA]
+	an RNase product with a 5' OH
+	a D-tryptophanyl-[tRNATrp]
+	an L-arginyl-[tRNAArg]
+	a tRNAPhe
+	mitochondrial tRNA uridine 27/28
+	G(5')ppp-mRNA
+	RNase G processing product mRNA
+	an L-selenocysteinyl-[tRNAsec]
+	a tRNALeu
+	a 5'-phospho-[mRNA]
+	RNase III processing product mRNA
+	an L-alanyl-[tRNAPro]
+	a tRNAGly
+	a 5'-(N7-methyl 5'-triphosphoguanosine)-(2'-O-methyl-ribonucleotide)-(2'-O-methyl-ribonucleotide)-[mRNA]
+	RNase II substrate with no poly-A tail
+	an N-modified aminoacyl-[tRNA]
+	a tRNAVal
+	a 5'-(5'-triphosphoguanosine)-AmACA-[mRNA]
+	mitochondrial tRNA pseudouridine 27/28
+	an L-phenylalanyl-[tRNAPhe]
+	a tRNAAsx
+	a 5' triphospho-[mRNA]
+	5'-phospho-guanosine-ribonucleotide-[tRNAHis]
+	an L-methionyl-[initiator tRNAMet]
+	a tRNAThr
+	a 5'-(N7-methyl 5'-triphosphoguanosine)-(2'-O-methyl-ribonucleotide)-[mRNA]
+	5'-triphospho-guanosine-ribonucleotide-[tRNAHis]
+	an L-leucyl-[tRNALeu]
+	a tRNAPro
+	an [RNA]-3'-ribonucleoside-3'-(5'-diphosphoguanosine)
+	a 5'-(5'-triphosphoguanosine)-(nucleotide)-[mRNA]
+	5'-(5'-diphosphoadenosine)-ribonucleotide-[tRNAHis]
+	a diphospho-5'-ribonucleotide-[mRNA]
+	tRNAIle2
+	a D-tryptophanyl-tRNATrp
+	a tRNALys
+	an [RNA] containing uridine
+	a 5'-phosphopurine-[mRNA]
+	a 28S rRNA containing an apurinic site
+	an rRNA
+	a glycyl-[tRNAGly]
+	a tRNAHis
+	snoRNAs
+	mRNA degradation substrate
+	an [RNA] containing cytidine
+	an L-tyrosyl-[tRNATyr]
+	a tRNAsec
+	crRNA
+	mRNA with poly(U) tail
+	pre-crRNA
+	a tRNA
+	an L-asparaginyl-[tRNAAsn]
+	a tRNACys
+	a shorter RNA
+	an mRNA precursor
+	Misc-RNAs
+	an L-seryl-[tRNAser]
+	a tRNATrp
+	RNase R degradation substrate RNA
+	mRNA processing substrate
+	a 5'-triphospho-ribonucleotide-[mRNA]
+	an N-formyl-L-methionyl-[initiator tRNAmet]
+	a D-aspartyl-tRNAAsp
+	a tRNAAla
+	an RNA fragment
+	a mRNA with poly(A) tail
+	an [RNA]-3'-ribonucleoside-3'-phosphate
+	a glycyl-[tRNAAla]
+	a tRNAPyl
+	a single-stranded RNA
+	an mRNA fragment
+	an [RNA] containing cytidine-adenosine pair
+	an L-prolyl-[tRNAPro]
+	tRNAAsn
+	a 2-O-methylated RNA
+	a modified mRNA
+	a double-stranded RNA
+	an L-seryl-[tRNAsec]
+	tRNAasp
+	a RNA containing 5-fluorouridine
+	an apolipoprotein B mRNA
+	an unwound RNA
+	an L-lysyl-[tRNALys]
+	a poly(A) tail
+	a mRNA processing product
+	a regulatory RNA
+	a 5S rRNA
+	a D-aminoacyl-[tRNA]
+	elongator tRNAMet
+	a 5'-hydroxy-ribonucleotide-3'-[RNA]
+	partially degraded mRNA
+	a ribonucleic acid
+	a 23S rRNA
+	an L-histidyl-[tRNAHis]
+	an [RNA]-3'-hydroxyl
+	a U6 snRNA
+	an [RNA] containing guanosine
+	a 17S rRNA
+	an L-valyl-[tRNAVal]
+	an [RNA]-3'-ribunucleoside-2'-phosphate
+	initiator tRNAMet
+	an O-phospho-L-seryl-[tRNASec]
+	piRNAs
+	an rRNA fragment
+	an L-cysteinyl-[tRNACys]
+	an [RNA] containing adenosine
+	a tRNAGln
+	wound RNA
+	a 9S rRNA
+	a poly (U) tail
+	a short RNA segment
+	a 25S rRNA
+	a [28S-rRNA]-3'-adenosine-3'-phosphate
+	an [RNA]-3'-ribonucleoside-2',3'-cyclophosphate
+	a tRNAglu
+	an 18S rRNA
+	a [pre-mRNA]-3'-adenosine-3'-phosphate
+	a pre-rRNA
+	an [RNA]-3'-uridine-3'-phosphate
+	4.5S rRNA precursor lacking 5' extension
+	a 28S rRNA
+	an [RNA]-3'-adenosine-3'-phosphate
+	a complete 4.5S rRNA precursor
+	a 21S rRNA
+	an [RNA]-3'-cytidine-3'-phosphate
+	a 16S rRNA
+	an [RNA]-3'-guanosine-3'-phosphate
+	YhaV endonuclease degradation substrate rRNA
+	an rRNA degradation substrate
+	a tRNA precursor with a 5' extension and a long 3' trailer
+	a [28S-rRNA]-3'-adenosine-2',3'-cyclophosphate
+	rRNA
+	a ligated tRNA with a 2'-5' linkage
+	a [pre-mRNA]-3'-adenosine-2',3'-cyclophosphate
+	an [RNA]-3'-ribonucleoside-3'-(5'-diphosphoadenosine)
+	a 5' half-tRNA molecule with a 2' phosphate on its 3' end
+	an [RNA]-3'-guanosine-2',3'-cyclophosphate
+	a 5'-NAD-capped-[RNA]
+	a 3'-half-tRNA molecule with a 5'-OH end
+	an [RNA]-3'-uridine-2',3'-cyclophosphate
+	snRNA
+	a tRNA precursor with a 5' extension and a short 3' extension
+	an [RNA]-3'-adenosine-2',3'-cyclophosphate
+	unstructured single-stranded RNA
+	a 2'-phospho-[ligated tRNA]
+	an [RNA]-3'-cytidine-2',3'-cyclophosphate
+	a 5'-(5'-diphosphoadenosine)-(ribonucleoside)-[RNA]
+	a spliced tRNA
+	mitochondrial tRNA uridine
+	a 5'-phospho-ribonucleoside-[RNA]
+	a 3' half-tRNA molecule with a phosphate on its 5' end
+	mitochondrial tRNA pseudouridine
+	tmRNA
+	a tRNA precursor with a short 3' extension
+	an mRNA
+	a polycistronic tRNA precursor
+	a peptidyl-aminoacyl-[tRNA]
+	a tRNA
+	a 5S rRNA precursor
+	a ligated tRNA
+	an O-phospho-L-seryl-[tRNACys]
+	a 5'-triphospho-AACA-[mRNA]
+	a 5'-Ap4-capped-[RNA]
+	a 7S rRNA precursor
+	a 5'-half-tRNA molecule with a 2',3'-cyclic phosphate end
+	an N-formyl-L-methionylaminoacyl-tRNA
+	a 5'-(N7-methyl 5'-triphosphoguanosine)-(2'-O-methyl-ribonucleotide)-[mRNA]
+	a 30S rRNA precursor
+	a tRNA precursor with a 5' extension
+	a peptidyl-[tRNA]
+	a 5'-(N7-methyl 5'-triphosphoguanosine)-(N6,2'-O-dimethyladenosine)-[mRNA]
+	a 4.5S rRNA precursor
+	a mitochondrial tRNA
+	mutated tRNA
+	a 5'-(N7-methyl 5'-triphosphoguanosine)-(2'-O-methyladenosine)-[mRNA]
+	an L-aspartyl-[tRNAasp]
+	a tRNA containing a 3' CCA end
+	a charged tRNA
+	a 5'-(N7-methyl'-(5'-triphosphoguanosine)-AACA-[mRNA]
+	an L-aspartyl-[tRNAAsn]
+	a tRNA fragment
+	a phosphorylated charged tRNA
+	a mature 5S-rRNA
+	a 5'-(5'-triphosphoguanosine)-AACA-[mRNA]
+	a 4-phosphooxy-L-aspartyl-[tRNAAsn]
+	modified tRNAs
+	a methylated tRNA
+	a 5'-hydroxy-adenosine-3'-[RNA]
+	RNase II poly-A substrate mRNA
+
