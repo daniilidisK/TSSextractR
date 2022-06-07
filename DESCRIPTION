@@ -39,7 +39,7 @@ Remotes: bioc::release/Rbowtie, bioc::release/GenomicAlignments,
          bioc::release/Rhtslib, bioc::release/rtracklayer, 
          bioc::release/ShortRead, bioc::release/BSgenome, 
          bioc::release/GenomicFeatures, bioc::release/VariantAnnotation, 
-         bioc::release/GenomicFiles, bioc::release/QuasR,
+         bioc::release/GenomicFiles, github::fmicompbio/QuasR,
          bioc::release/dada2, bioc::release/phyloseq
 LinkingTo: Rcpp
 RoxygenNote: 7.2.0
