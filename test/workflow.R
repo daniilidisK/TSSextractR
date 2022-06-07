@@ -89,13 +89,13 @@ TSSfinal$pvalues <- betaBinomial(TSSfinal$RRS.x, TSSfinal$RRS.y, 1e6, 1e6, ncore
 refGenome <- readDNAStringSet('./inst/extdata/U00096.3.fasta')[[1]]
 # refGenome <- BSgenome.Ecoli.NCBI.20080805$NC_000913
 
-PromoterArea <- getPromoterSequencies(TSSfinal$start, TSSfinal$strand, genome = refGenome, left = 40, right = 5, plot = 1)
+PromoterArea <- getPromoterSequencies(TSSfinal1$start, TSSfinal1$strand, genome = refGenome, left = 40, right = 5, plot = T)
 
-purpyr <- dinucleotideTSS(TSSfinal$start, TSSfinal$strand, TSSfinal$RRS.x, plots = T)
-TSSfinal$PP <- purpyr$dints
-TSSfinal$PP <- purpyr$PP
+purpyr <- dinucleotideTSS(TSSfinal1$start, TSSfinal1$strand, TSSfinal1$RRS.x, refGenome, plots = T)
+TSSfinal1$PP <- purpyr$dints
+TSSfinal1$PP <- purpyr$PP
 
-test <- annotateTSS(TSSfinal, GeneList, plot = T)
+TSSfinal1 <- annotateTSS(TSSfinal1, GeneList, plot = T)
 
 TSSfinal1$type = ""
 TSSfinal1$type <- annotateRNA(TSSfinal1, "./inst/extdata/ncRNAs.txt")
@@ -108,7 +108,7 @@ TSS_5UTR <- getRNA5UTRsequencies(TSSfinal1, refGenome, GeneList, plot = T)
 
 sd_area <- getShineDalgarnoSequencies(TSS_5UTR, plot = T)
 
-plotTSSperCategory(TSSfinal, refGenome)
+plotTSSperCategory(TSSfinal1, refGenome)
 
 leaderless <- analyzeLeaderlessRNA(TSSfinal1, TSS_5UTR, GeneProductSet)
 
@@ -124,13 +124,13 @@ for (i in seq_len(nrow(TSS_5UTR))) {
 TSS_5UTR %>% filter(grepl("nucleosidase", ann) | grepl("nucleotidase", ann)) %>% count(distances > 110)
 
 
-plotTSSpreference(TSSfinal, GeneList)
+plotTSSpreference(TSSfinal1, GeneList)
 
 
 # ------- Operon Analysis -------
-TSSfinal <- assignOperons(TSSfinal, operons)
+TSSfinal1 <- assignOperons(TSSfinal1, operons)
 
-plotOperonPreference(TSSfinal, operons)
+plotOperonPreference(TSSfinal1, operons)
 
 # ------- Microbiome TSS Analysis -------
 microbiomeTrimAndQuality("./mouse_microbiome",
@@ -187,3 +187,4 @@ head(track)
 
 
 gc()
+

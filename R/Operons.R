@@ -42,7 +42,7 @@ assignOperons <- function(TSSdataframe, operons) {
     geom_bar() + stat_count(geom = "text",
                             aes(label = paste(stat(count), "\n", sprintf("%.02f", stat(count)/sum(stat(count))*100), "%", sep = "")),
                             vjust = -0.2) +
-    # scale_y_continuous(expand = c(0, 0), limits = c(0, 8000)) +
+    scale_y_continuous(expand = c(0, 0), limits = c(0, 8000)) +
     labs(x = "Operon Genes Number", y = "Operon counts") +
     scale_fill_manual(name = "GenOperon", values = c("firebrick3", "dodgerblue4")) +
     theme_classic() + theme(axis.line = element_line(color = "grey"),
@@ -133,7 +133,7 @@ plotOperonPreference <- function(TSSdataframe, operons) {
     scale_x_continuous(labels = percent) +
     ggtitle(bquote("Internal TSS Preference in Operons ("~italic(n)~"="~.(nrow(indexP))~")")) +
     labs(y = "Counts", x = "Operon Positions") +
-    theme_linedraw() + theme(plot.title = element_text(size = 19L, hjust = 0.5, family = "serif"),
+    theme_bw() + theme(plot.title = element_text(size = 19L, hjust = 0.5, family = "serif"),
                              axis.title.y = element_text(size = 16L, family = "serif"),
                              axis.title.x = element_text(size = 16L, family = "serif"),
                              axis.text = element_text(size = 12L, color = "black"),

@@ -88,6 +88,7 @@ getPromoterSequencies <- function(start, strand, genome, left = 40, right = 5, p
 #' @import stringr
 #' @import scales
 #' @importFrom rlang .data
+#' @import kableExtra
 dinucleotideTSS <- function(start, strand, RRSenriched, genome, plots = T) {
   nrows <- length(start)
   TSS_2nt <- c()
@@ -103,8 +104,13 @@ dinucleotideTSS <- function(start, strand, RRSenriched, genome, plots = T) {
   TSStable <- data.frame(table(TSS_2nt))
   colnames(TSStable) <- c("dinucleotides", "counts")
 
-  TSStable$Freq <- TSStable$counts/sum(TSStable$counts)
-  print(TSStable)
+  TSStable$Freq <- as.numeric(format(round(TSStable$counts/sum(TSStable$counts)*100, digits = 3), nsmall = 3))
+  # print(TSStable)
+
+  print(kable(TSStable, col.names = c("Dinucleotides", "Count","Frequency")) %>%
+          kable_classic(html_font = "Times New Roman") %>%
+          column_spec(2, color = "white", background = spec_color(TSStable$counts, end = 0.9)))
+
 
 
   # Jitter plot grouped by Purine or Pyrimidine
@@ -129,25 +135,25 @@ dinucleotideTSS <- function(start, strand, RRSenriched, genome, plots = T) {
     fig <- ggplot(TSS_2nt, mapping = aes(x = factor(.data$dints, levels = c("CA", "CG", "TA", "TG", "AA", "AG", "GA", "GG", "CC", "CT",
                                                                "TC", "TT", "AC", "AT", "GC", "GT")),
                                 y = .data$RRS, colour = .data$dints), inherit.aes = T) +
-      geom_jitter(size = 0.20, width = 0.25, alpha = 0.7) + scale_color_manual(values = c(rep("firebrick2", 16))) +
+      geom_jitter(size = 0.20, width = 0.25, alpha = 0.7) + scale_color_manual(values = c(rep("#B00430", 16))) +
       geom_boxplot(outlier.alpha = 0, fill = c(rep("dodgerblue3", 4), rep("#31B425", 4),
                                                rep("yellow", 4), rep("#FF6196", 4)), color="black", alpha=0.4, lwd=0.2) +
-      scale_x_discrete(labels = c(paste("CA\n", round(TSStable$Freq[which(TSStable$dinucleotides == "CA")]*100, 2), "%", sep = ""),
-                                  paste("CG\n", round(TSStable$Freq[which(TSStable$dinucleotides == "CG")]*100, 2), "%", sep = ""),
-                                  paste("TA\n", round(TSStable$Freq[which(TSStable$dinucleotides == "TA")]*100, 2), "%", sep = ""),
-                                  paste("TG\n", round(TSStable$Freq[which(TSStable$dinucleotides == "TG")]*100, 2), "%", sep = ""),
-                                  paste("AA\n", round(TSStable$Freq[which(TSStable$dinucleotides == "AA")]*100, 2), "%", sep = ""),
-                                  paste("AG\n", round(TSStable$Freq[which(TSStable$dinucleotides == "AG")]*100, 2), "%", sep = ""),
-                                  paste("GA\n", round(TSStable$Freq[which(TSStable$dinucleotides == "GA")]*100, 2), "%", sep = ""),
-                                  paste("GG\n", round(TSStable$Freq[which(TSStable$dinucleotides == "GG")]*100, 2), "%", sep = ""),
-                                  paste("CC\n", round(TSStable$Freq[which(TSStable$dinucleotides == "CC")]*100, 2), "%", sep = ""),
-                                  paste("CT\n", round(TSStable$Freq[which(TSStable$dinucleotides == "CT")]*100, 2), "%", sep = ""),
-                                  paste("TC\n", round(TSStable$Freq[which(TSStable$dinucleotides == "TC")]*100, 2), "%", sep = ""),
-                                  paste("TT\n", round(TSStable$Freq[which(TSStable$dinucleotides == "TT")]*100, 2), "%", sep = ""),
-                                  paste("AC\n", round(TSStable$Freq[which(TSStable$dinucleotides == "AC")]*100, 2), "%", sep = ""),
-                                  paste("AT\n", round(TSStable$Freq[which(TSStable$dinucleotides == "AT")]*100, 2), "%", sep = ""),
-                                  paste("GC\n", round(TSStable$Freq[which(TSStable$dinucleotides == "GC")]*100, 2), "%", sep = ""),
-                                  paste("GT\n", round(TSStable$Freq[which(TSStable$dinucleotides == "GT")]*100, 2), "%", sep = ""))) +
+      scale_x_discrete(labels = c(paste("CA\n", round(TSStable$Freq[which(TSStable$dinucleotides == "CA")], 2), "%", sep = ""),
+                                  paste("CG\n", round(TSStable$Freq[which(TSStable$dinucleotides == "CG")], 2), "%", sep = ""),
+                                  paste("TA\n", round(TSStable$Freq[which(TSStable$dinucleotides == "TA")], 2), "%", sep = ""),
+                                  paste("TG\n", round(TSStable$Freq[which(TSStable$dinucleotides == "TG")], 2), "%", sep = ""),
+                                  paste("AA\n", round(TSStable$Freq[which(TSStable$dinucleotides == "AA")], 2), "%", sep = ""),
+                                  paste("AG\n", round(TSStable$Freq[which(TSStable$dinucleotides == "AG")], 2), "%", sep = ""),
+                                  paste("GA\n", round(TSStable$Freq[which(TSStable$dinucleotides == "GA")], 2), "%", sep = ""),
+                                  paste("GG\n", round(TSStable$Freq[which(TSStable$dinucleotides == "GG")], 2), "%", sep = ""),
+                                  paste("CC\n", round(TSStable$Freq[which(TSStable$dinucleotides == "CC")], 2), "%", sep = ""),
+                                  paste("CT\n", round(TSStable$Freq[which(TSStable$dinucleotides == "CT")], 2), "%", sep = ""),
+                                  paste("TC\n", round(TSStable$Freq[which(TSStable$dinucleotides == "TC")], 2), "%", sep = ""),
+                                  paste("TT\n", round(TSStable$Freq[which(TSStable$dinucleotides == "TT")], 2), "%", sep = ""),
+                                  paste("AC\n", round(TSStable$Freq[which(TSStable$dinucleotides == "AC")], 2), "%", sep = ""),
+                                  paste("AT\n", round(TSStable$Freq[which(TSStable$dinucleotides == "AT")], 2), "%", sep = ""),
+                                  paste("GC\n", round(TSStable$Freq[which(TSStable$dinucleotides == "GC")], 2), "%", sep = ""),
+                                  paste("GT\n", round(TSStable$Freq[which(TSStable$dinucleotides == "GT")], 2), "%", sep = ""))) +
       theme_linedraw() + theme(legend.position = "none",
                                plot.title = element_text(size = 19L, hjust = 0.5, family = "serif"),
                                axis.title.y = element_text(size = 16L, family = "serif"),
@@ -477,7 +483,7 @@ plotTSSpreference <- function(TSSdataframe, GeneList) {
     geom_histogram(bins = 700L) +
     ggtitle(bquote("Internal TSS Positions ("~italic(n)~"="~.(nrow(index))~")")) +
     labs(y = "Counts", x = "TSS Position in Genes") +
-    theme_linedraw() + theme(plot.title = element_text(size = 19L, hjust = 0.5, family = "serif"),
+    theme_bw() + theme(plot.title = element_text(size = 19L, hjust = 0.5, family = "serif"),
                              axis.title.y = element_text(size = 16L, family = "serif"),
                              axis.title.x = element_text(size = 16L, family = "serif"),
                              axis.text = element_text(size = 12L, color = "black"),
@@ -505,7 +511,7 @@ plotTSSpreference <- function(TSSdataframe, GeneList) {
     ggtitle(bquote("Internal TSS Positional Preference ("~italic(n)~"="~.(nrow(index))~")")) +
     labs(y = "TSS Fraction", x = "TSS Position in Genes") +
     scale_x_continuous(labels = percent) +
-    theme_linedraw() + theme(plot.title = element_text(size = 19L, hjust = 0.5, family = "serif"),
+    theme_bw() + theme(plot.title = element_text(size = 19L, hjust = 0.5, family = "serif"),
                              axis.title.y = element_text(size = 16L, family = "serif"),
                              axis.title.x = element_text(size = 16L, family = "serif"),
                              axis.text = element_text(size = 11L, color = "black"),
