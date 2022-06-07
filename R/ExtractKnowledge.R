@@ -25,10 +25,10 @@ getPromoterSequencies <- function(start, strand, genome, left = 40, right = 5, p
     stop("The window size is very small")
   }
 
-  fig <- ""
+
   nrows <- length(start)
   TSSarea <- c()
-  j = 1
+  j <- 1
   for (i in seq_len(nrows)) {
     if (strand[i] == "+") {
       if (start[i] - left < 0) {
@@ -209,37 +209,37 @@ annotateTSS <- function(TSSdataframe, GeneList, plot = T) {
   for (i in seq_len(nrows)) {
     pos <- TSSdataframe$start[i]
     strand <- TSSdataframe$strand[i]
-    coords = which(GeneList$left <= pos & GeneList$right >= pos)
+    coords <- which(GeneList$left <= pos & GeneList$right >= pos)
 
     if (length(coords) == 1) {
       if ((strand == "+" & GeneList$strand[coords] == "forward") | (strand == "-" & GeneList$strand[coords] == "reverse")) {
-        TSSdataframe$orientation[i] = "S"
-        TSSdataframe$position[i] = "INT"
+        TSSdataframe$orientation[i] <- "S"
+        TSSdataframe$position[i] <- "INT"
         genes[i] <- GeneList$name[coords]
       } else {
         if (strand == "+" & GeneList$strand[coords + 1] == "forward") {
           if ((GeneList$left[coords + 1] - pos) <= 550) {
-            TSSdataframe$orientation[i] = "S"
-            TSSdataframe$position[i] = "UP"
+            TSSdataframe$orientation[i] <- "S"
+            TSSdataframe$position[i] <- "UP"
             genes[i] <- GeneList$name[coords + 1]
           } else {
-            TSSdataframe$orientation[i] = "AS"
-            TSSdataframe$position[i] = "INT"
+            TSSdataframe$orientation[i] <- "AS"
+            TSSdataframe$position[i] <- "INT"
             genes[i] <- GeneList$name[coords]
           }
         } else if (strand == "-" & GeneList$strand[coords - 1] == "reverse") {
           if ((pos - GeneList$right[coords - 1]) <= 550) {
-            TSSdataframe$orientation[i] = "S"
-            TSSdataframe$position[i] = "UP"
+            TSSdataframe$orientation[i] <- "S"
+            TSSdataframe$position[i] <- "UP"
             genes[i] <- GeneList$name[coords - 1]
           } else {
-            TSSdataframe$orientation[i] = "AS"
-            TSSdataframe$position[i] = "INT"
+            TSSdataframe$orientation[i] <- "AS"
+            TSSdataframe$position[i] <- "INT"
             genes[i] <- GeneList$name[coords]
           }
         } else {
-          TSSdataframe$orientation[i] = "AS"
-          TSSdataframe$position[i] = "INT"
+          TSSdataframe$orientation[i] <- "AS"
+          TSSdataframe$position[i] <- "INT"
           genes[i] <- GeneList$name[coords]
         }
       }
@@ -247,27 +247,27 @@ annotateTSS <- function(TSSdataframe, GeneList, plot = T) {
       if ((strand == "+" & "forward" %in% GeneList$strand[coords]) | (strand == "-" & "reverse" %in% GeneList$strand[coords])) {
         if ((strand == "+" & "forward" %in% GeneList$strand[coords[length(coords)] + 1]) & !(pos %in% GeneList$left[coords])) {
           if (GeneList$left[coords[length(coords)] + 1] - pos > 550) {
-            TSSdataframe$orientation[i] = "S"
-            TSSdataframe$position[i] = "INT"
+            TSSdataframe$orientation[i] <- "S"
+            TSSdataframe$position[i] <- "INT"
             genes[i] <- GeneList$name[which(GeneList$strand[coords] == "forward") + coords[1] - 1]
           } else {
-            TSSdataframe$orientation[i] = "S"
-            TSSdataframe$position[i] = "UP"
+            TSSdataframe$orientation[i] <- "S"
+            TSSdataframe$position[i] <- "UP"
             genes[i] <- GeneList$name[coords[length(coords)] + 1]
           }
         } else if ((strand == "-" & "reverse" %in% GeneList$strand[coords[1] - 1]) & !(pos %in% GeneList$right[coords])) {
           if (pos - GeneList$right[coords[1] - 1] > 550) {
-            TSSdataframe$orientation[i] = "S"
-            TSSdataframe$position[i] = "INT"
+            TSSdataframe$orientation[i] <- "S"
+            TSSdataframe$position[i] <- "INT"
             genes[i] <- GeneList$name[which(GeneList$strand[coords] == "reverse") + coords[1] - 1]
           } else {
-            TSSdataframe$orientation[i] = "S"
-            TSSdataframe$position[i] = "UP"
+            TSSdataframe$orientation[i] <- "S"
+            TSSdataframe$position[i] <- "UP"
             genes[i] <- GeneList$name[coords[1] - 1]
           }
         } else {
-          TSSdataframe$orientation[i] = "S"
-          TSSdataframe$position[i] = "INT"
+          TSSdataframe$orientation[i] <- "S"
+          TSSdataframe$position[i] <- "INT"
           genes[i] <- GeneList$name[ifelse(strand == "-",
                                            which.max(pos - GeneList$left[coords]) + coords[1] - 1,
                                            which.max(GeneList$right[coords] - pos) + coords[1] - 1)]
@@ -275,27 +275,27 @@ annotateTSS <- function(TSSdataframe, GeneList, plot = T) {
       } else if ((strand == "+" & all("reverse" == GeneList$strand[coords])) | (strand == "-" & all("forward" == GeneList$strand[coords]))) {
         if ((strand == "+" & "forward" %in% GeneList$strand[coords[length(coords)] + 1])) {
           if (GeneList$left[coords[length(coords)] + 1] - pos > 550) {
-            TSSdataframe$orientation[i] = "AS"
-            TSSdataframe$position[i] = "INT"
+            TSSdataframe$orientation[i] <- "AS"
+            TSSdataframe$position[i] <- "INT"
             genes[i] <- GeneList$name[coords[1]]
           } else {
-            TSSdataframe$orientation[i] = "S"
-            TSSdataframe$position[i] = "UP"
+            TSSdataframe$orientation[i] <- "S"
+            TSSdataframe$position[i] <- "UP"
             genes[i] <- GeneList$name[coords[length(coords)] + 1]
           }
         } else if ((strand == "-" & "reverse" %in% GeneList$strand[coords[1] - 1])) {
           if (pos - GeneList$right[coords[1] - 1] > 550) {
-            TSSdataframe$orientation[i] = "AS"
-            TSSdataframe$position[i] = "INT"
+            TSSdataframe$orientation[i] <- "AS"
+            TSSdataframe$position[i] <- "INT"
             genes[i] <- GeneList$name[coords[1]]
           } else {
-            TSSdataframe$orientation[i] = "S"
-            TSSdataframe$position[i] = "UP"
+            TSSdataframe$orientation[i] <- "S"
+            TSSdataframe$position[i] <- "UP"
             genes[i] <- GeneList$name[coords[1] - 1]
           }
         } else {
-          TSSdataframe$orientation[i] = "AS"
-          TSSdataframe$position[i] = "INT"
+          TSSdataframe$orientation[i] <- "AS"
+          TSSdataframe$position[i] <- "INT"
           genes[i] <- GeneList$name[coords[1]]
         }
       }
@@ -306,17 +306,17 @@ annotateTSS <- function(TSSdataframe, GeneList, plot = T) {
             & ((strand == "+" & GeneList$strand[j] == "forward")
                | (strand == "-" & GeneList$strand[ifelse(j - 1 != 0, j - 1, nrows1)] == "reverse"))) {
           if (GeneList$left[j] - pos > 550 & (strand == "+" & GeneList$strand[j] == "forward")) {
-            TSSdataframe$position[i] = "ORPH"
-            TSSdataframe$orientation[i] = ""
+            TSSdataframe$position[i] <- "ORPH"
+            TSSdataframe$orientation[i] <- ""
             genes[i] <- ""
           } else if (pos - GeneList$right[ifelse(j - 1 != 0, j - 1, nrows1)] > 550 &
                      (strand == "-" & GeneList$strand[ifelse(j - 1 != 0, j - 1, nrows1)] == "reverse")) {
-            TSSdataframe$position[i] = "ORPH"
-            TSSdataframe$orientation[i] = ""
+            TSSdataframe$position[i] <- "ORPH"
+            TSSdataframe$orientation[i] <- ""
             genes[i] <- ""
           } else {
-            TSSdataframe$orientation[i] = "S"
-            TSSdataframe$position[i] = "UP"
+            TSSdataframe$orientation[i] <- "S"
+            TSSdataframe$position[i] <- "UP"
             genes[i] <- GeneList$name[ifelse(strand == "+", j, ifelse(j - 1 != 0, j - 1, nrows1))]
           }
           break
@@ -325,13 +325,13 @@ annotateTSS <- function(TSSdataframe, GeneList, plot = T) {
                    & (GeneList$left[j] > pos & ifelse(j - 1 != 0, GeneList$right[j - 1] < pos,
                                                       GeneList$right[nrow(GeneList)] < pos + GeneList$right[nrow(GeneList)]))) {
           if (GeneList$left[j] - pos > 550 & (strand == "+" & GeneList$strand[j] == "reverse")) {
-            TSSdataframe$position[i] = "ORPH"
-            TSSdataframe$orientation[i] = ""
+            TSSdataframe$position[i] <- "ORPH"
+            TSSdataframe$orientation[i] <- ""
             genes[i] <- ""
           } else if (pos - GeneList$right[ifelse(j - 1 != 0, j - 1, nrows1)] > 550
                      & (strand == "-" & GeneList$strand[ifelse(j - 1 != 0, j - 1, nrows1)] == "forward")) {
-            TSSdataframe$position[i] = "ORPH"
-            TSSdataframe$orientation[i] = ""
+            TSSdataframe$position[i] <- "ORPH"
+            TSSdataframe$orientation[i] <- ""
             genes[i] <- ""
           } else if (((strand == "+" & GeneList$strand[j + 1] == "forward" & GeneList$left[ifelse(j + 1 == nrows1 + 1, 1, j + 1)] > pos)
                       | (strand == "-" & GeneList$strand[ifelse(j - 2 <= 0, nrows1 + j - 2, j - 2)] == "reverse" &
@@ -339,25 +339,25 @@ annotateTSS <- function(TSSdataframe, GeneList, plot = T) {
                      & (GeneList$right[ifelse(j - 1 != 0, j - 1, nrows1)] < pos)) {
 
             if ((GeneList$left[ifelse(j + 1 == nrows1 + 1, 1, j + 1)] - pos > 550) & strand == "+") {
-              TSSdataframe$position[i] = "UP"
-              TSSdataframe$orientation[i] = "AS"
+              TSSdataframe$position[i] <- "UP"
+              TSSdataframe$orientation[i] <- "AS"
               genes[i] <- GeneList$name[j]
               break
             } else if ((pos - GeneList$right[ifelse(j - 2 <= 0, nrows1 + j - 2, j - 2)] > 550) & strand == "-") {
-              TSSdataframe$position[i] = "UP"
-              TSSdataframe$orientation[i] = "AS"
+              TSSdataframe$position[i] <- "UP"
+              TSSdataframe$orientation[i] <- "AS"
               genes[i] <- GeneList$name[ifelse(j - 1 != 0, j - 1, nrows1)]
               break
             } else {
-              TSSdataframe$orientation[i] = "S"
-              TSSdataframe$position[i] = "UP"
+              TSSdataframe$orientation[i] <- "S"
+              TSSdataframe$position[i] <- "UP"
               genes[i] <- GeneList$name[ifelse(strand == "+", ifelse(j + 1 == nrows1 + 1, 1, j + 1),
                                                ifelse(j - 2 <= 0, nrows1 + j - 2, j - 2))]
               break
             }
           } else {
-            TSSdataframe$orientation[i] = "AS"
-            TSSdataframe$position[i] = "UP"
+            TSSdataframe$orientation[i] <- "AS"
+            TSSdataframe$position[i] <- "UP"
             genes[i] <- GeneList$name[ifelse(strand == "+", j, ifelse(j - 1 != 0, j - 1, nrows1))]
             break
           }
@@ -540,16 +540,16 @@ annotateRNA <- function(TSSdataframe, nc_RNA_path) {
     stop("TSS Dataframe has not proper columns")
   }
 
-  nc_rnas = read_delim(nc_RNA_path, delim = "\t",
-                       escape_double = FALSE, col_names = FALSE,
-                       trim_ws = TRUE)
+  nc_rnas <- read_delim(nc_RNA_path, delim = "\t",
+                        escape_double = FALSE, col_names = FALSE,
+                        trim_ws = TRUE)
 
-  type = c()
+  type <- c()
   for (i in seq_len(nrow(TSSdataframe))) {
     if (tolower(TSSdataframe$genes[i]) %in% tolower(nc_rnas$X1)) {
-      type[i] = "other RNA"
+      type[i] <- "other RNA"
     } else if (TSSdataframe$position[i] != "ORPH") {
-      type[i] = "mRNA"
+      type[i] <- "mRNA"
     }
   }
 
@@ -715,7 +715,7 @@ plotTSSperCategory <- function(TSSdataframe, genome) {
   nrows <- nrow(TSSdataframe)
   upstream <- 40
   TSSarea_with_ann <- data.frame(seq = "", annotation = "")
-  j = 1
+  j <- 1
   for (i in seq_len(nrows)) {
     ann <- paste(TSSdataframe$orientation[i], TSSdataframe$position[i], sep = "")
     if (TSSdataframe$strand[i] == "+") {

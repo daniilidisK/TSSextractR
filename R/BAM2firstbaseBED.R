@@ -47,7 +47,7 @@ bam2bedTSS <- function(bamFile) {
   newgtf <- data.frame(start = newgtf, strand = bed$V6)
   rm(bed)
 
-  newgtf1 <- newgtf %>%
+  newgtf <- newgtf %>%
     group_by(.data$start, .data$strand) %>%
     summarise(iterations = n(), RRS = .data$iterations*10^6/nrows)
 

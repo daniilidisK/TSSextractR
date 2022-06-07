@@ -104,7 +104,7 @@ createNJtree <- function(taxonomies, seqtable, plot = T) {
   phangAlign <- phyDat(as(alignment, "matrix"), type="DNA")
   dm <- dist.ml(phangAlign)
   treeNJ <- NJ(dm)
-  fit = pml(treeNJ, data=phangAlign)
+  fit <- pml(treeNJ, data=phangAlign)
   fitGTR <- update(fit, k = 4, inv = 0.2)
   fitGTR <- optim.pml(fitGTR,
                       model="GTR",
@@ -125,21 +125,21 @@ createNJtree <- function(taxonomies, seqtable, plot = T) {
 
   # table(tax_table(taxa)[, "Phylum"], exclude = NULL)
 
-  prevdf = apply(X = otu_table(ps),
-                 MARGIN = ifelse(taxa_are_rows(ps), yes = 1, no = 2),
-                 FUN = function(x) { sum(x > 0) })
+  prevdf <- apply(X = otu_table(ps),
+                  MARGIN = ifelse(taxa_are_rows(ps), yes = 1, no = 2),
+                  FUN = function(x) { sum(x > 0) })
 
   # Add taxonomy and total read counts to this data.frame
-  prevdf = data.frame(Prevalence = prevdf,
-                      TotalAbundance = taxa_sums(ps),
-                      tax_table(ps))
+  prevdf <- data.frame(Prevalence = prevdf,
+                       TotalAbundance = taxa_sums(ps),
+                       tax_table(ps))
 
   ddply(prevdf, "Phylum", function(df1){
     cbind(mean(df1$Prevalence), sum(df1$Prevalence))
   })
 
 
-  genus_data = tax_glom(physeq = ps, taxrank = "Genus", NArm = TRUE)
+  genus_data <- tax_glom(physeq = ps, taxrank = "Genus", NArm = TRUE)
   topOTUs <- names(sort(taxa_sums(genus_data), decreasing = T))
   tree <- prune_taxa(topOTUs, genus_data)
 

@@ -18,20 +18,20 @@ assignOperons <- function(TSSdataframe, operons) {
   }
 
   nrows <- nrow(TSSdataframe)
-  TSSdataframe$operons = ""
-  TSSdataframe$GenOperon = ""
+  TSSdataframe$operons <- ""
+  TSSdataframe$GenOperon <- ""
 
   for (i in seq_len(nrows)) {
     if ((TSSdataframe$genes[i] != "") & length(which(str_detect(operons$X6, TSSdataframe$genes[i])))) {
 
-      TSSdataframe$operons[i] = operons$X1[which(grepl(regex(paste(TSSdataframe$genes[i], "[,]", sep = "")), operons$X6, perl = T) |
+      TSSdataframe$operons[i] <- operons$X1[which(grepl(regex(paste(TSSdataframe$genes[i], "[,]", sep = "")), operons$X6, perl = T) |
                                                 grepl(regex(paste(TSSdataframe$genes[i], "$", sep = "")), operons$X6, perl = T))]
-      TSSdataframe$GenOperon[i] = operons$X5[which(grepl(regex(paste(TSSdataframe$genes[i], "[,]", sep = "")), operons$X6, perl = T) |
+      TSSdataframe$GenOperon[i] <- operons$X5[which(grepl(regex(paste(TSSdataframe$genes[i], "[,]", sep = "")), operons$X6, perl = T) |
                                                   grepl(regex(paste(TSSdataframe$genes[i], "$", sep = "")), operons$X6, perl = T))]
 
     } else if (length(which(str_detect(operons$X6, TSSdataframe$genes[i]))) == 0) {
-      TSSdataframe$operons[i] = 0
-      TSSdataframe$GenOperon[i] = 0
+      TSSdataframe$operons[i] <- 0
+      TSSdataframe$GenOperon[i] <- 0
     }
   }
 
@@ -88,7 +88,7 @@ plotOperonPreference <- function(TSSdataframe, operons) {
         orientation[j] <- "S"
         j <- j + 1
       } else if (operons$X2[which(operons$X1 == TSSoperons$operons[i])] > TSSoperons$start[i]) {
-        distance[k] = operons$X2[which(operons$X1 == TSSoperons$operons[i])] - TSSoperons$start[i]
+        distance[k] <- operons$X2[which(operons$X1 == TSSoperons$operons[i])] - TSSoperons$start[i]
         k <- k + 1
       }
     } else if (TSSoperons$strand[i] == "-" & operons$X4[which(operons$X1 == TSSoperons$operons[i])] == "reverse") {
@@ -100,7 +100,7 @@ plotOperonPreference <- function(TSSdataframe, operons) {
         orientation[j] <- "S"
         j <- j + 1
       } else if (operons$X3[which(operons$X1 == TSSoperons$operons[i])] < TSSoperons$start[i]) {
-        distance[k] = TSSoperons$start[i] - operons$X3[which(operons$X1 == TSSoperons$operons[i])]
+        distance[k] <- TSSoperons$start[i] - operons$X3[which(operons$X1 == TSSoperons$operons[i])]
         k <- k + 1
       }
     } else if (TSSoperons$strand[i] == "+" & operons$X4[which(operons$X1 == TSSoperons$operons[i])] == "reverse") {

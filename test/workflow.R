@@ -1,6 +1,7 @@
 library(Biostrings)
 library(stringr)
 library(ggplot2)
+library(dplyr)
 
 options(warn = -1)
 
