@@ -21,21 +21,21 @@ trimAlignAndQuality <- function(fastq, adapter, minLength, refGenome, aligner, c
   fastqBasename <- basename(fastq)
   fastqWoutSuffix <- str_match(fastqBasename, "(.*)\\.fastq.gz")[,2]
 
-   preprocessReads(filename = fastq,
-                   outputFilename = paste(dirname(fastq), "/", fastqWoutSuffix, ".out.fastq.gz", sep = ""),
-                   Rpattern = adapter, complexity = complexity,
-                   minLength = minLength, clObj = cl)
+  preprocessReads(filename = fastq,
+                  outputFilename = paste(dirname(fastq), "/", fastqWoutSuffix, ".out.fastq.gz", sep = ""),
+                  Rpattern = adapter, complexity = complexity,
+                  minLength = minLength, clObj = cl)
 
   tmpfile <- tempfile(pattern = "alignfile", tmpdir = tempdir(), fileext = "")
   write(paste("FileName\tSampleName\n", normalizePath(dirname(fastq)), "/", fastqWoutSuffix, ".out.fastq.gz", "\tSample1", sep = ""), tmpfile)
 
 
   proj <- qAlign(tmpfile,
-                  genome = refGenome,
-                  aligner = aligner,
-                  paired = ifelse(isPaired == FALSE, "no", "yes"),
-                  alignmentsDir = dirname(fastq),
-                  clObj = cl, alignmentParameter = "-l 16")
+                 genome = refGenome,
+                 aligner = aligner,
+                 paired = ifelse(isPaired == FALSE, "no", "yes"),
+                 alignmentsDir = dirname(fastq),
+                 clObj = cl, alignmentParameter = "-l 16")
 
   qQCReport(proj, pdfFilename = paste(dirname(fastq), "/quality_report.pdf", sep = ""), clObj = cl)
 

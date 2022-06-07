@@ -25,9 +25,9 @@ assignOperons <- function(TSSdataframe, operons) {
     if ((TSSdataframe$genes[i] != "") & length(which(str_detect(operons$X6, TSSdataframe$genes[i])))) {
 
       TSSdataframe$operons[i] <- operons$X1[which(grepl(regex(paste(TSSdataframe$genes[i], "[,]", sep = "")), operons$X6, perl = T) |
-                                                grepl(regex(paste(TSSdataframe$genes[i], "$", sep = "")), operons$X6, perl = T))]
+                                                    grepl(regex(paste(TSSdataframe$genes[i], "$", sep = "")), operons$X6, perl = T))]
       TSSdataframe$GenOperon[i] <- operons$X5[which(grepl(regex(paste(TSSdataframe$genes[i], "[,]", sep = "")), operons$X6, perl = T) |
-                                                  grepl(regex(paste(TSSdataframe$genes[i], "$", sep = "")), operons$X6, perl = T))]
+                                                      grepl(regex(paste(TSSdataframe$genes[i], "$", sep = "")), operons$X6, perl = T))]
 
     } else if (length(which(str_detect(operons$X6, TSSdataframe$genes[i]))) == 0) {
       TSSdataframe$operons[i] <- 0
@@ -134,12 +134,12 @@ plotOperonPreference <- function(TSSdataframe, operons) {
     ggtitle(bquote("Internal TSS Preference in Operons ("~italic(n)~"="~.(nrow(indexP))~")")) +
     labs(y = "Counts", x = "Operon Positions") +
     theme_bw() + theme(plot.title = element_text(size = 19L, hjust = 0.5, family = "serif"),
-                             axis.title.y = element_text(size = 16L, family = "serif"),
-                             axis.title.x = element_text(size = 16L, family = "serif"),
-                             axis.text = element_text(size = 12L, color = "black"),
-                             strip.background = element_rect(colour = "grey40", fill = "grey90", size = 0.4),
-                             strip.text = element_text(colour = "black", size = 12L),
-                             legend.position = "none") + scale_fill_manual(values = c("#95D840", "steelblue3"))
+                       axis.title.y = element_text(size = 16L, family = "serif"),
+                       axis.title.x = element_text(size = 16L, family = "serif"),
+                       axis.text = element_text(size = 12L, color = "black"),
+                       strip.background = element_rect(colour = "grey40", fill = "grey90", size = 0.4),
+                       strip.text = element_text(colour = "black", size = 12L),
+                       legend.position = "none") + scale_fill_manual(values = c("#95D840", "steelblue3"))
   plot(fig)
 
 

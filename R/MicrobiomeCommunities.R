@@ -40,7 +40,7 @@ microbiomeTrimAndQuality <- function(mi_path, adapters, minLength, trucnLength, 
 
   plot(plotQualityProfile(files) + theme_light() + theme(strip.background = element_rect(fill = "black")))
   plot(plotQualityProfile(file.path(mi_path, paste0(samplenames, "_filt.fastq.gz"))) +
-    theme_light() + theme(strip.background = element_rect(fill = "black")))
+         theme_light() + theme(strip.background = element_rect(fill = "black")))
 }
 
 
@@ -223,10 +223,10 @@ align2refGenome <- function(filt_files, genome, aligner = "Rbowtie", pair_end = 
               alignmentParameter = parameters)
   file.rename(p@alignments[["FileName"]],
               paste0(normalizePath(dirname(filt_files)), c(paste0("/idx2_filt_", tools::file_path_sans_ext(basename(genome)), ".bam"),
-                                paste0("/idx6_filt_", tools::file_path_sans_ext(basename(genome)), ".bam"))))
+                                                           paste0("/idx6_filt_", tools::file_path_sans_ext(basename(genome)), ".bam"))))
   file.rename(paste0(p@alignments[["FileName"]], ".bai"),
               paste0(normalizePath(dirname(filt_files)), c(paste0("/idx2_filt_", tools::file_path_sans_ext(basename(genome)), ".bam.bai"),
-                                paste0("/idx6_filt_", tools::file_path_sans_ext(basename(genome)), ".bam.bai"))))
+                                                           paste0("/idx6_filt_", tools::file_path_sans_ext(basename(genome)), ".bam.bai"))))
 
   stopCluster(cl)
 }

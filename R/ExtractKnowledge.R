@@ -40,8 +40,8 @@ getPromoterSequencies <- function(start, strand, genome, left = 40, right = 5, p
     } else {
       if (start[i] + left > length(genome)) {
         TSSarea[j] <- str_flatten(reverseComplement(DNAString(x =
-                                                      paste(genome[(length(genome) - right + start[i] + 1):length(genome)],
-                                                            genome[1:(start[i] + left)], sep = ""))))
+                                                                paste(genome[(length(genome) - right + start[i] + 1):length(genome)],
+                                                                      genome[1:(start[i] + left)], sep = ""))))
       } else {
         TSSarea[j] <- str_flatten(reverseComplement(DNAString(x = genome[(start[i] - right + 1):(start[i] + left)])))
       }
@@ -88,7 +88,7 @@ getPromoterSequencies <- function(start, strand, genome, left = 40, right = 5, p
 #' @import stringr
 #' @import scales
 #' @importFrom rlang .data
-#' @import kableExtra
+#' @importFrom kableExtra kable kable_classic column_spec spec_color
 dinucleotideTSS <- function(start, strand, RRSenriched, genome, plots = T) {
   nrows <- length(start)
   TSS_2nt <- c()
@@ -133,8 +133,8 @@ dinucleotideTSS <- function(start, strand, RRSenriched, genome, plots = T) {
   if (plots) {
     # Jitter plot for dinucleotide frequencies
     fig <- ggplot(TSS_2nt, mapping = aes(x = factor(.data$dints, levels = c("CA", "CG", "TA", "TG", "AA", "AG", "GA", "GG", "CC", "CT",
-                                                               "TC", "TT", "AC", "AT", "GC", "GT")),
-                                y = .data$RRS, colour = .data$dints), inherit.aes = T) +
+                                                                            "TC", "TT", "AC", "AT", "GC", "GT")),
+                                         y = .data$RRS, colour = .data$dints), inherit.aes = T) +
       geom_jitter(size = 0.20, width = 0.25, alpha = 0.7) + scale_color_manual(values = c(rep("#B00430", 16))) +
       geom_boxplot(outlier.alpha = 0, fill = c(rep("dodgerblue3", 4), rep("#31B425", 4),
                                                rep("yellow", 4), rep("#FF6196", 4)), color="black", alpha=0.4, lwd=0.2) +
@@ -431,39 +431,39 @@ plotTSSpreference <- function(TSSdataframe, GeneList) {
     for (i in seq_len(nrow(TSSinternalP))) {
       if (TSSinternalP$strand[i] == "+") {
         indexP[i] <- (TSSinternalP$start[i] - GeneList$left[which(GeneList$name == TSSinternalP$genes[i]
-                                                  & TSSinternalP$start[i] >= GeneList$left & TSSinternalP$start[i] <= GeneList$right)]) /
+                                                                  & TSSinternalP$start[i] >= GeneList$left & TSSinternalP$start[i] <= GeneList$right)]) /
           (GeneList$right[which(GeneList$name == TSSinternalP$genes[i] & TSSinternalP$start[i] >= GeneList$left
                                 & TSSinternalP$start[i] <= GeneList$right)] - GeneList$left[which(GeneList$name == TSSinternalP$genes[i]
-                                                        & TSSinternalP$start[i] >= GeneList$left & TSSinternalP$start[i] <= GeneList$right)])
+                                                                                                  & TSSinternalP$start[i] >= GeneList$left & TSSinternalP$start[i] <= GeneList$right)])
         indexP1[i] <- (TSSinternalP$start[i] - GeneList$left[which(GeneList$name == TSSinternalP$genes[i]
-                                                    & TSSinternalP$start[i] >= GeneList$left & TSSinternalP$start[i] <= GeneList$right)]) %% 3
+                                                                   & TSSinternalP$start[i] >= GeneList$left & TSSinternalP$start[i] <= GeneList$right)]) %% 3
       } else {
         indexP[i] <- (GeneList$right[which(GeneList$name == TSSinternalP$genes[i]
-                           & TSSinternalP$start[i] >= GeneList$left & TSSinternalP$start[i] <= GeneList$right)] - TSSinternalP$start[i]) /
+                                           & TSSinternalP$start[i] >= GeneList$left & TSSinternalP$start[i] <= GeneList$right)] - TSSinternalP$start[i]) /
           (GeneList$right[which(GeneList$name == TSSinternalP$genes[i] & TSSinternalP$start[i] >= GeneList$left
                                 & TSSinternalP$start[i] <= GeneList$right)] - GeneList$left[which(GeneList$name == TSSinternalP$genes[i]
-                                                        & TSSinternalP$start[i] >= GeneList$left & TSSinternalP$start[i] <= GeneList$right)])
+                                                                                                  & TSSinternalP$start[i] >= GeneList$left & TSSinternalP$start[i] <= GeneList$right)])
         indexP1[i] <- (GeneList$right[which(GeneList$name == TSSinternalP$genes[i]
-                           & TSSinternalP$start[i] >= GeneList$left & TSSinternalP$start[i] <= GeneList$right)] - TSSinternalP$start[i]) %% 3
+                                            & TSSinternalP$start[i] >= GeneList$left & TSSinternalP$start[i] <= GeneList$right)] - TSSinternalP$start[i]) %% 3
       }
     }
     for (i in seq_len(nrow(TSSinternalM))) {
       if (TSSinternalM$strand[i] == "+") {
         indexM[i] <- (TSSinternalM$start[i] - GeneList$left[which(GeneList$name == TSSinternalM$genes[i]
-                                                  & TSSinternalM$start[i] >= GeneList$left & TSSinternalM$start[i] <= GeneList$right)]) /
+                                                                  & TSSinternalM$start[i] >= GeneList$left & TSSinternalM$start[i] <= GeneList$right)]) /
           (GeneList$right[which(GeneList$name == TSSinternalM$genes[i] & TSSinternalM$start[i] >= GeneList$left
                                 & TSSinternalM$start[i] <= GeneList$right)] - GeneList$left[which(GeneList$name == TSSinternalM$genes[i]
-                                                          & TSSinternalM$start[i] >= GeneList$left & TSSinternalM$start[i] <= GeneList$right)])
+                                                                                                  & TSSinternalM$start[i] >= GeneList$left & TSSinternalM$start[i] <= GeneList$right)])
         indexM1[i] <- (TSSinternalM$start[i] - GeneList$left[which(GeneList$name == TSSinternalM$genes[i]
-                                                    & TSSinternalM$start[i] >= GeneList$left & TSSinternalM$start[i] <= GeneList$right)]) %% 3
+                                                                   & TSSinternalM$start[i] >= GeneList$left & TSSinternalM$start[i] <= GeneList$right)]) %% 3
       } else {
         indexM[i] <- (GeneList$right[which(GeneList$name == TSSinternalM$genes[i]
-                            & TSSinternalM$start[i] >= GeneList$left & TSSinternalM$start[i] <= GeneList$right)] - TSSinternalM$start[i]) /
+                                           & TSSinternalM$start[i] >= GeneList$left & TSSinternalM$start[i] <= GeneList$right)] - TSSinternalM$start[i]) /
           (GeneList$right[which(GeneList$name == TSSinternalM$genes[i] & TSSinternalM$start[i] >= GeneList$left
                                 & TSSinternalM$start[i] <= GeneList$right)] - GeneList$left[which(GeneList$name == TSSinternalM$genes[i]
-                                                          & TSSinternalM$start[i] >= GeneList$left & TSSinternalM$start[i] <= GeneList$right)])
+                                                                                                  & TSSinternalM$start[i] >= GeneList$left & TSSinternalM$start[i] <= GeneList$right)])
         indexM1[i] <- (GeneList$right[which(GeneList$name == TSSinternalM$genes[i]
-                            & TSSinternalM$start[i] >= GeneList$left & TSSinternalM$start[i] <= GeneList$right)] - TSSinternalM$start[i]) %% 3
+                                            & TSSinternalM$start[i] >= GeneList$left & TSSinternalM$start[i] <= GeneList$right)] - TSSinternalM$start[i]) %% 3
       }
     }
 
@@ -484,12 +484,12 @@ plotTSSpreference <- function(TSSdataframe, GeneList) {
     ggtitle(bquote("Internal TSS Positions ("~italic(n)~"="~.(nrow(index))~")")) +
     labs(y = "Counts", x = "TSS Position in Genes") +
     theme_bw() + theme(plot.title = element_text(size = 19L, hjust = 0.5, family = "serif"),
-                             axis.title.y = element_text(size = 16L, family = "serif"),
-                             axis.title.x = element_text(size = 16L, family = "serif"),
-                             axis.text = element_text(size = 12L, color = "black"),
-                             strip.background = element_rect(colour = "grey40", fill = "grey90", size = 0.4),
-                             strip.text = element_text(colour = "black", size = 12L),
-                             legend.position = "none") + scale_fill_manual(values = c("#95D840", "steelblue3"))
+                       axis.title.y = element_text(size = 16L, family = "serif"),
+                       axis.title.x = element_text(size = 16L, family = "serif"),
+                       axis.text = element_text(size = 12L, color = "black"),
+                       strip.background = element_rect(colour = "grey40", fill = "grey90", size = 0.4),
+                       strip.text = element_text(colour = "black", size = 12L),
+                       legend.position = "none") + scale_fill_manual(values = c("#95D840", "steelblue3"))
   plot(fig)
 
 
@@ -512,13 +512,13 @@ plotTSSpreference <- function(TSSdataframe, GeneList) {
     labs(y = "TSS Fraction", x = "TSS Position in Genes") +
     scale_x_continuous(labels = percent) +
     theme_bw() + theme(plot.title = element_text(size = 19L, hjust = 0.5, family = "serif"),
-                             axis.title.y = element_text(size = 16L, family = "serif"),
-                             axis.title.x = element_text(size = 16L, family = "serif"),
-                             axis.text = element_text(size = 11L, color = "black"),
-                             strip.background = element_rect(colour = "grey85", fill = "grey85"),
-                             strip.text = element_text(colour = "black", size = 12L),
-                             legend.position = "none",
-                             panel.border = element_rect(colour = "grey50")) +
+                       axis.title.y = element_text(size = 16L, family = "serif"),
+                       axis.title.x = element_text(size = 16L, family = "serif"),
+                       axis.text = element_text(size = 11L, color = "black"),
+                       strip.background = element_rect(colour = "grey85", fill = "grey85"),
+                       strip.text = element_text(colour = "black", size = 12L),
+                       legend.position = "none",
+                       panel.border = element_rect(colour = "grey50")) +
     scale_fill_manual(values = c("#95D840", "steelblue3")) +
     geom_text(size = 5, data = ann_text, mapping = aes(x = 0.15, y = 0.0047, label = ann_text$label), family = "serif")
 
@@ -791,7 +791,7 @@ analyzeLeaderlessRNA <- function(TSSdataframe, TSS_5UTR, GeneAnnotation) {
               .data$genes == TSSdataframe$genes[which(TSSdataframe$start == leaderless$TSSpos[i])]) == 1) {
       finalLeaderless[j,] <- c(leaderless$TSSpos[i], TSSdataframe$genes[which(TSSdataframe$start == leaderless$TSSpos[i])],
                                ifelse(!is.null(GeneAnnotation$ann[which(GeneAnnotation$gene ==
-                                                                      TSSdataframe$genes[which(TSSdataframe$start == leaderless$TSSpos[i])])]),
+                                                                          TSSdataframe$genes[which(TSSdataframe$start == leaderless$TSSpos[i])])]),
                                       GeneAnnotation$ann[which(GeneAnnotation$gene ==
                                                                  TSSdataframe$genes[which(TSSdataframe$start == leaderless$TSSpos[i])])]))
       j <- j + 1
