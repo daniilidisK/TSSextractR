@@ -33,14 +33,8 @@ Imports: Rcpp (>= 1.0.8.3),
          scales,
          ggplot2,
          plyr,
-         QuasR,
          rlang
 Enhances: parallel
-Remotes: bioc::release/Rbowtie, bioc::release/GenomicAlignments, 
-         bioc::release/Rhtslib, bioc::release/rtracklayer, 
-         bioc::release/ShortRead, bioc::release/BSgenome, 
-         bioc::release/GenomicFeatures, bioc::release/VariantAnnotation, 
-         bioc::release/GenomicFiles,
-         bioc::release/dada2, bioc::release/phyloseq
+Remotes: bioc::release/Rbowtie,bioc::release/QuasR,bioc::release/GenomicAlignments,bioc::release/Rhtslib, bioc::release/rtracklayer,bioc::release/ShortRead, bioc::release/BSgenome,bioc::release/GenomicFeatures, bioc::release/VariantAnnotation,bioc::release/GenomicFiles,bioc::release/dada2, bioc::release/phyloseq
 LinkingTo: Rcpp
 RoxygenNote: 7.2.0
