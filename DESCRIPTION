@@ -8,10 +8,12 @@ Maintainer: Daniilidis Konstantinos <daniilidis@ieee.org>
 Description: More about what it does (maybe more than one line)
     Use four spaces when indenting paragraphs within the Description.
 Date: 2022-02-19
-biocViews: Software, Transcriptomics, Workflow
 License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: true
+Depends:
+    R (>= 3.3.0)
+biocViews: Software, Transcriptomics, Workflow
 Imports: Rcpp (>= 1.0.8.3),
          Biostrings,
          bedr,
