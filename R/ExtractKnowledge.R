@@ -154,7 +154,7 @@ dinucleotideTSS <- function(start, strand, RRSenriched, genome, plots = T) {
                                   paste("AT\n", round(TSStable$Freq[which(TSStable$dinucleotides == "AT")], 2), "%", sep = ""),
                                   paste("GC\n", round(TSStable$Freq[which(TSStable$dinucleotides == "GC")], 2), "%", sep = ""),
                                   paste("GT\n", round(TSStable$Freq[which(TSStable$dinucleotides == "GT")], 2), "%", sep = ""))) +
-      theme_linedraw() + theme(legend.position = "none",
+      theme_bw() + theme(legend.position = "none",
                                plot.title = element_text(size = 19L, hjust = 0.5, family = "serif"),
                                axis.title.y = element_text(size = 16L, family = "serif"),
                                axis.title.x = element_text(size = 16L, family = "serif"),
@@ -171,11 +171,11 @@ dinucleotideTSS <- function(start, strand, RRSenriched, genome, plots = T) {
                                   paste("RR\n", round(count(purpyr, .data$PP == "RR")[2, 2]/nrows*100, 2), "%", sep = " "),
                                   paste("YR\n", round(count(purpyr, .data$PP == "YR")[2, 2]/nrows*100, 2), "%", sep = " "))) +
       scale_color_manual(values = c(RY = "#FECA5A", YY = "#FFA87B", RR = "#F33C25", YR = "#B00538")) +
-      theme_linedraw() +
+      theme_bw() +
       theme(legend.position = "none",
             plot.title = element_text(size = 19L, hjust = 0.5, family = "serif"),
             axis.title.y = element_text(size = 16L, family = "serif"),
-            axis.text = element_text(size = 12L)) +
+            axis.text = element_text(size = 12L, color = "black")) +
       ylim(0, 1e3) + labs(x = NULL, y = "Relative Read Score", title = bquote("Purine/Pyrimidine Jitter Plot ("~italic(n)~"="~.(nrows)~")"))
 
     plot(fig2)
@@ -483,6 +483,7 @@ plotTSSpreference <- function(TSSdataframe, GeneList) {
     geom_histogram(bins = 700L) +
     ggtitle(bquote("Internal TSS Positions ("~italic(n)~"="~.(nrow(index))~")")) +
     labs(y = "Counts", x = "TSS Position in Genes") +
+    scale_x_continuous(labels = percent) +
     theme_bw() + theme(plot.title = element_text(size = 19L, hjust = 0.5, family = "serif"),
                        axis.title.y = element_text(size = 16L, family = "serif"),
                        axis.title.x = element_text(size = 16L, family = "serif"),
@@ -806,7 +807,7 @@ analyzeLeaderlessRNA <- function(TSSdataframe, TSS_5UTR, GeneAnnotation) {
 
 #' Title
 #'
-#' @param TSSdataframe An annotated TSS Dataframe produces from annotateRNA function
+#' @param TSSdataframe An annotated TSS Dataframe produced from annotateRNA function
 #' @param sRNAfile A string path containing a tab-separated list of non-coding RNAs
 #'
 #' @return The dataframe with the TSS, which correspond to small RNAs
@@ -833,3 +834,28 @@ smallRNAanalysis <- function(TSSdataframe, sRNAfile) {
 
   return(smallRNA)
 }
+
+
+#' Get Upstream Representative TSS
+#'
+#' @param TSSdataframe An annotated TSS Dataframe produced from annotateTSS and betaBinomial functions
+#'
+#' @return A Dataframe containing all Upstream Representative TSS
+#' @export
+#'
+#' @import dplyr
+getRepresentativeTSS <- function(TSSdataframe) {
+  if (!all(c("start", "strand", "genes", "orientation", "position", "pvalues") %in% colnames(TSSdataframe))) {
+    stop("TSS Dataframe has not proper columns")
+  }
+
+  RepresentativeTSS <- TSSdataframe %>%
+    filter(position == "UP" & orientation == "S") %>%
+    arrange(start, strand) %>%
+    group_by(genes) %>%
+    slice(which.min(pvalues)) %>%
+    arrange(start, strand)
+
+  return(RepresentativeTSS)
+}
+

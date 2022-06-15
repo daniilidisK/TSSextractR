@@ -126,6 +126,8 @@ TSS_5UTR %>% filter(grepl("nucleosidase", ann) | grepl("nucleotidase", ann)) %>%
 
 plotTSSpreference(TSSfinal1, GeneList)
 
+RepresentativeTSS <- getRepresentativeTSS(TSSfinal1)
+
 
 # ------- Operon Analysis -------
 TSSfinal1 <- assignOperons(TSSfinal1, operons)

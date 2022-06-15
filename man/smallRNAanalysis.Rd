@@ -7,7 +7,7 @@
 smallRNAanalysis(TSSdataframe, sRNAfile)
 }
 \arguments{
-\item{TSSdataframe}{An annotated TSS Dataframe produces from annotateRNA function}
+\item{TSSdataframe}{An annotated TSS Dataframe produced from annotateRNA function}
 
 \item{sRNAfile}{A string path containing a tab-separated list of non-coding RNAs}
 }

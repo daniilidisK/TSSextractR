@@ -36,17 +36,11 @@ Imports: Rcpp (>= 1.0.8.3),
          ggplot2,
          plyr,
          rlang,
-         Rbowtie,
-         QuasR,
          GenomicAlignments,
-         Rhtslib,
          rtracklayer,
-         ShortRead,
          BSgenome,
-         GenomicFeatures,
          VariantAnnotation,
-         GenomicFiles,
-         dada2,
+         QuasR,
          phyloseq
 Enhances: parallel
 LinkingTo: Rcpp
