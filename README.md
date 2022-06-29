@@ -1,4 +1,4 @@
-# TSS ectractR
+# TSS extractR
 
 [![GitHub issues](https://img.shields.io/github/issues/daniilidisK/TSS_extractR?color=green)](https://github.com/daniilidisK/TSS_extractR/issues/new)
 [![License:MIT](https://img.shields.io/badge/license-MIT-blue.svg)](https://cran.r-project.org/web/licenses/MIT)
