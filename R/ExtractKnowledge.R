@@ -836,15 +836,21 @@ smallRNAanalysis <- function(TSSdataframe, sRNAfile) {
 }
 
 
-#' Get Upstream Representative TSS
+#' Get Upstream Representative TSS and sequence conservation
 #'
 #' @param TSSdataframe An annotated TSS Dataframe produced from annotateTSS and betaBinomial functions
+#' @param plot A logical value to show (TRUE) or not show (FALSE) plots
+#' @param genome (If plot = T) The reference genome in format of readDNAStringSet or BSgenome object
 #'
 #' @return A Dataframe containing all Upstream Representative TSS
 #' @export
 #'
+#' @import ggplot2
 #' @import dplyr
-getRepresentativeTSS <- function(TSSdataframe) {
+#' @importFrom Biostrings reverseComplement DNAString
+#' @import stringr
+#' @importFrom ggseqlogo geom_logo theme_logo
+getRepresentativeTSS <- function(TSSdataframe, plot = T, genome) {
   if (!all(c("start", "strand", "genes", "orientation", "position", "pvalues") %in% colnames(TSSdataframe))) {
     stop("TSS Dataframe has not proper columns")
   }
@@ -855,6 +861,47 @@ getRepresentativeTSS <- function(TSSdataframe) {
     group_by(genes) %>%
     slice(which.min(pvalues)) %>%
     arrange(start, strand)
+
+  if (plot) {
+    left <- 40
+    right <- 1
+    TSSarea <- c()
+    j <- 1
+    for (i in seq_len(nrow(RepresentativeTSS))) {
+      if (TSSdataframe$strand[i] == "+") {
+        if (TSSdataframe$start[i] - left < 0) {
+          TSSarea[j] <- str_flatten(paste(genome[(length(genome) - left + TSSdataframe$start[i] + 1):length(genome)],
+                                          genome[1:(TSSdataframe$start[i] + right)], sep = ""))
+        } else {
+          TSSarea[j] <- str_flatten(genome[(TSSdataframe$start[i] - left):(TSSdataframe$start[i] + right - 1)])
+        }
+      } else {
+        if (TSSdataframe$start[i] + left > length(genome)) {
+          TSSarea[j] <- str_flatten(reverseComplement(DNAString(x =
+                                                                  paste(genome[(length(genome) - right + TSSdataframe$start[i] + 1):length(genome)],
+                                                                        genome[1:(TSSdataframe$start[i] + left)], sep = ""))))
+        } else {
+          TSSarea[j] <- str_flatten(reverseComplement(DNAString(x = genome[(TSSdataframe$start[i] - right + 1):(TSSdataframe$start[i] + left)])))
+        }
+      }
+      j <- j + 1
+    }
+
+    TSSarea <- data.frame(TSSarea)
+
+    fig <- ggplot() + geom_logo(TSSarea) + theme_logo() + xlab("Position") +
+      ggtitle(bquote("-10 and -35 Regions ("~italic(n)~"="~.(nrow(TSSarea))~")")) +
+      scale_x_continuous(breaks = c(left - 34, left - 29, left - 19, left - 9, left + 1), labels = c("-35", "-30", "-20", "-10", "+1")) +
+      theme_bw() + geom_vline(xintercept = left + 0.5, linetype = 2) +
+      theme(axis.line = element_line(color = "black"),
+            plot.title = element_text(hjust = 0.5, face = "bold", family = "serif", size = 20L),
+            axis.text = element_text(color = "black", size = 12L),
+            axis.title = element_text(size = 17L, family = "serif"))
+
+    plot(fig)
+  }
+
+  gc()
 
   return(RepresentativeTSS)
 }

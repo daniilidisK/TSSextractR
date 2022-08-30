@@ -13,8 +13,8 @@ prepare <- setClass("prepare", slots = list(fastqFile = "character",
                                             isPaired = "logical",
                                             complexity = "numeric"))
 
-prepareData <- new("prepare", fastqFile = "../TSS_R/Enriched/Replicate1/Replicate1_enriched_R1_001.fastq.gz",
-                   adapter = "AGATCGGAAGAGCACACGTCTGAACTCCAGTCAC",
+  prepareData <- new("prepare", fastqFile = "../TSS_R/Enriched/Replicate1/Replicate1_enriched_R1_001.fastq.gz",
+                     adapter = "AGATCGGAAGAGCACACGTCTGAACTCCAGTCAC",
                    minLength = 55,
                    refGenome = "./inst/extdata/U00096.3.fasta",
                    aligner = "Rbowtie",
@@ -43,7 +43,6 @@ TSScontrol <- bam2bedTSS(bamControl)
 TSSfinal <- TSSenriched %>%
   full_join(TSScontrol, by = c("start", "strand")) %>%
   mutate_at(vars(iterations.y, RRS.y), ~replace(., is.na(.), 0)) %>%
-  # mutate(ratio = log2(RRS.x/RRS.y)) %>%
   filter(!is.na(iterations.x))
 
 TSSfinal <- clusterTSS(TSSfinal, cutoff = 5)
@@ -89,34 +88,34 @@ TSSfinal$pvalues <- betaBinomial(TSSfinal$RRS.x, TSSfinal$RRS.y, 1e6, 1e6, ncore
 refGenome <- readDNAStringSet('./inst/extdata/U00096.3.fasta')[[1]]
 # refGenome <- BSgenome.Ecoli.NCBI.20080805$NC_000913
 
-PromoterArea <- getPromoterSequencies(TSSfinal1$start, TSSfinal1$strand, genome = refGenome, left = 40, right = 5, plot = T)
+PromoterArea <- getPromoterSequencies(TSSfinal$start, TSSfinal$strand, genome = refGenome, left = 40, right = 5, plot = T)
 
-purpyr <- dinucleotideTSS(TSSfinal1$start, TSSfinal1$strand, TSSfinal1$RRS.x, refGenome, plots = T)
-TSSfinal1$PP <- purpyr$dints
-TSSfinal1$PP <- purpyr$PP
+purpyr <- dinucleotideTSS(TSSfinal$start, TSSfinal$strand, TSSfinal$RRS.x, refGenome, plots = T)
+TSSfinal$dints <- purpyr$dints
+TSSfinal$PP <- purpyr$PP
 
-TSSfinal1 <- annotateTSS(TSSfinal1, GeneList, plot = T)
+TSSfinal <- annotateTSS(TSSfinal, GeneList, plot = T)
 
-TSSfinal1$type = ""
-TSSfinal1$type <- annotateRNA(TSSfinal1, "./inst/extdata/ncRNAs.txt")
+TSSfinal$type = ""
+TSSfinal$type <- annotateRNA(TSSfinal, "./inst/extdata/ncRNAs.txt")
 
 cisRNA <- unique(smallRNA %>% filter(orientation == "S") %>% pull(genes))
 transRNA <- unique(smallRNA %>% filter(orientation == "AS") %>% pull(genes))
 
 
-TSS_5UTR <- getRNA5UTRsequencies(TSSfinal1, refGenome, GeneList, plot = T)
+TSS_5UTR <- getRNA5UTRsequencies(TSSfinal, refGenome, GeneList, plot = T)
 
 sd_area <- getShineDalgarnoSequencies(TSS_5UTR, plot = T)
 
-plotTSSperCategory(TSSfinal1, refGenome)
+plotTSSperCategory(TSSfinal, refGenome)
 
-leaderless <- analyzeLeaderlessRNA(TSSfinal1, TSS_5UTR, GeneProductSet)
+leaderless <- analyzeLeaderlessRNA(TSSfinal, TSS_5UTR, GeneProductSet)
 
 # Add Gene annotation column
 TSS_5UTR$ann = ""
 for (i in seq_len(nrow(TSS_5UTR))) {
-  if (length(GeneProductSet$ann[which(GeneProductSet$gene == TSSfinal1$genes[which(TSSfinal1$start == TSS_5UTR$TSSpos[i])])]) > 0) {
-    TSS_5UTR$ann[i] = GeneProductSet$ann[which(GeneProductSet$gene == TSSfinal1$genes[which(TSSfinal1$start == TSS_5UTR$TSSpos[i])])][1]
+  if (length(GeneProductSet$ann[which(GeneProductSet$gene == TSSfinal$genes[which(TSSfinal$start == TSS_5UTR$TSSpos[i])])]) > 0) {
+    TSS_5UTR$ann[i] = GeneProductSet$ann[which(GeneProductSet$gene == TSSfinal$genes[which(TSSfinal$start == TSS_5UTR$TSSpos[i])])][1]
   }
 }
 
@@ -124,15 +123,15 @@ for (i in seq_len(nrow(TSS_5UTR))) {
 TSS_5UTR %>% filter(grepl("nucleosidase", ann) | grepl("nucleotidase", ann)) %>% count(distances > 110)
 
 
-plotTSSpreference(TSSfinal1, GeneList)
+plotTSSpreference(TSSfinal, GeneList)
 
-RepresentativeTSS <- getRepresentativeTSS(TSSfinal1)
+RepresentativeTSS <- getRepresentativeTSS(TSSfinal, plot = T, genome)
 
 
 # ------- Operon Analysis -------
-TSSfinal1 <- assignOperons(TSSfinal1, operons)
+TSSfinal <- assignOperons(TSSfinal, operons)
 
-plotOperonPreference(TSSfinal1, operons)
+plotOperonPreference(TSSfinal, operons)
 
 # ------- Microbiome TSS Analysis -------
 microbiomeTrimAndQuality("./mouse_microbiome",
@@ -180,13 +179,10 @@ oscillibacter <- analyzeTSSmicrobes(c("./mouse_microbiome/idx2_filt_Oscillibacte
 ecoli <- analyzeTSSmicrobes(c("./mouse_microbiome/idx2_filt_U00096.3.bam",
                               "./mouse_microbiome/idx6_filt_U00096.3.bam"))
 
-
 getN <- function(x) sum(getUniques(x))
 track <- cbind(out, sapply(taxonomies$dada, getN), sapply(taxonomies$allSeqs, getN), rowSums(taxonomies$noChim))
 colnames(track) <- c("input", "filtered", "denoisedF", "merged", "nonchim")
 rownames(track) <- sample.names
 head(track)
 
-
 gc()
-

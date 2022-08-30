@@ -17,7 +17,7 @@
 
 ## An automated method to identify Transcription Start Sites (TSS) in microbiome genomes, using Cappable Sequencing
 
-[Cappable-seq](https://bmcgenomics.biomedcentral.com/articles/10.1186/s12864-016-2539-z) is a high throughput Next Generation Sequencing (NGS) technique, which emphasizes the enrichment of the 5' ends of the transcripts. This method is based on the biochemical identification of Transcription Start Sites (TSS) in prokaryotic organisms. These specific regions carry at their 5' end a triphosphate group, also known as a 'cap' in prokaryotic organisms, because it is the first nucleoside, during chain polymerization. Using Vaccinia Capping Enzyme (VCE), the triphosphorylated 5' end can be capped with the eukaryotic capping template, but instead of Guanosine Triphosphates (GTPs), are using destheiobiotinylated Guanosine Triphosphates, which are simple GTPs, fused with a biotin derivative, called destheiobiotin. So, this destheiobiotinylated cap can be captured with Streptavidin Magnetic Beads and in this way, the intact 5' RNA fragments can be isolated and sequenced.
+Cappable-seq [1] is a high throughput Next Generation Sequencing (NGS) technique, which emphasizes the enrichment of the 5' ends of the transcripts. This protocol is based on the biochemical identification of Transcription Start Sites (TSS) in prokaryotic organisms. These specific regions carry at their 5' end a triphosphate group, also known as a 'cap' in prokaryotic organisms, because it is the first nucleoside, during chain polymerization. Using Vaccinia Capping Enzyme (VCE), the triphosphorylated 5' end can be capped with the eukaryotic capping template, but instead of Guanosine Triphosphates (GTPs), are using destheiobiotinylated Guanosine Triphosphates, which are simple GTPs, fused with a biotin derivative, called destheiobiotin. So, this destheiobiotinylated cap can be captured with Streptavidin Magnetic Beads and in this way, the intact 5' RNA fragments can be isolated and sequenced.
 
 TSSextractR is an R package for transcriptome analysis. This package can detect and visualize candidate TSS from Cappable-seq Sequencing data, analyze them statistically and find conserved motifs of the promoters and Shine - Dalgarno regions. Also, this package can annotate TSS into the categories: Upstream, Internal, Sense, AntiSense and Representative. Finally, it can detect and annotate leaderless *m*RNAs, *cis* and *trans* acting small RNAs and operons.
 
@@ -26,11 +26,15 @@ TSSextractR is an R package for transcriptome analysis. This package can detect 
 TSSextractR can be installed with the following R code:
 ```r
 if(!require("devtools")) {
-    install.packages("devtools")
+  install.packages("devtools")
 } else {
-    install_github("daniilidisK/TSSextractR")
+  library(devtools)
+  install_github("daniilidisK/TSSextractR")
 }
 ```
+
+## References
+1. Ettwiller, L., Buswell, J., Yigit, E. et al. A novel enrichment strategy reveals unprecedented number of novel transcription start sites at single base resolution in a model prokaryote and the gut microbiome. BMC Genomics 17, 199 (2016). https://doi.org/10.1186/s12864-016-2539-z
 
 ## Contact
 Bug reports, questions and suggestions are welcome and appreciated.

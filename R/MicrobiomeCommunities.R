@@ -96,7 +96,7 @@ assignTaxonmies <- function(filt_fastq, rdp_train_set, pool, plot = T, multithre
 #' @import scales
 #' @importFrom stats update
 #' @importFrom rlang .data
-createNJtree <- function(taxonomies, seqtable, plot = T) {
+createCompositionPlots <- function(taxonomies, seqtable, plot = T) {
   seqs <- getSequences(seqtable)
   names(seqs) <- seqs
   alignment <- AlignSeqs(DNAStringSet(seqs), anchor=NA, verbose=FALSE, processors = 10)
