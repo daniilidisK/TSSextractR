@@ -1,0 +1,390 @@
+---
+title: "Cappable-seq Workflow"
+output: 
+  html_notebook: 
+    toc: yes
+    number_sections: yes
+---
+
+Supplementary files: <https://uthnoc-my.sharepoint.com/:f:/g/personal/dakonstantinos_o365_uth_gr/EscRd-ehu51DrOnAOHJC4tkBl0oIIMQW_mVpgf6NYQ0ItA?e=rHBv4Y>
+
+Cappable-seq [1] is a high throughput Next Generation Sequencing (NGS) technique, which emphasizes the enrichment of the 5' ends of the transcripts. This protocol is based on the biochemical identification of Transcription Start Sites (TSS) in prokaryotic organisms. These specific regions carry at their 5' end a triphosphate group, also known as a 'cap' in prokaryotic organisms, because it is the first nucleoside, during chain polymerization. Using Vaccinia Capping Enzyme (VCE), the triphosphorylated 5' end can be capped with the eukaryotic capping template, but instead of Guanosine Triphosphates (GTPs), are using destheiobiotinylated Guanosine Triphosphates, which are simple GTPs, fused with a biotin derivative, called destheiobiotin. So, this destheiobiotinylated cap can be captured with Streptavidin Magnetic Beads and in this way, the intact 5' RNA fragments can be isolated and sequenced.
+
+*TSSextractR* is an R package for transcriptome analysis. This package can detect and visualize candidate TSS from Cappable-seq Sequencing data, analyze them statistically and find conserved motifs of the promoters and Shine - Dalgarno regions. Also, this package can annotate TSS into the categories: Upstream, Internal, Sense, AntiSense and Representative. Finally, it can detect and annotate leaderless *m*RNAs, *cis* and *trans* acting small RNAs and operons.
+
+## Installation
+
+TSSextractR can be installed with the following R code:
+
+```{r}
+if(!require("devtools")) {
+  install.packages("devtools")
+} else {
+  library(devtools)
+  install_github("daniilidisK/TSSextractR")
+  library(TSSextractR)
+}
+```
+
+## Library and Data Loading
+
+To begin with the transcriptomic analysis, the necessary libraries must be loaded, in order to manipulate the biological replicates as sequencing files. The other necessary libraries are loaded by the *TSSextractR* package. Test Cappable-seq data, can be downloaded from here: <https://www.ebi.ac.uk/ena/browser/view/PRJEB9717?show=reads>. The first half of the analysis, refers to data derived from a monoculture of Escherichia coli K-12 and not from a microbial (metagenome) sample.
+
+```{r}
+options(warn = -1) # Suppress all Warnings
+
+
+if (!require("BiocManager", quietly = TRUE))
+  install.packages("BiocManager", quiet = TRUE)
+if (!require("Biostrings", quietly = TRUE))
+  BiocManager::install("Biostrings")
+if (!require("Rqc", quietly = TRUE))
+  BiocManager::install("Rqc")
+if (!require("stringr", quietly = TRUE))
+  install.packages("stringr", quiet = TRUE)
+if (!require("ggplot2", quietly = TRUE))
+  install.packages("ggplot2", quiet = TRUE)
+if (!require("ggExtra", quietly = TRUE))
+  install.packages("ggExtra", quiet = TRUE)
+if (!require("Rsamtools", quietly = TRUE))
+  install.packages("Rsamtools", quiet = TRUE)
+if (!require("readr", quietly = TRUE))
+  install.packages("readr", quiet = TRUE)
+
+
+library(Biostrings)
+library(BiocParallel)
+library(Rqc)
+library(Rsamtools)
+library(stringr)
+library(ggplot2)
+library(ggExtra)
+library(readr)
+```
+
+## Data Preprocess and Alignment
+
+Sequencing technologies typically produce files in which the contained bases are of varying quality. Additionally, there may be sample-specific issues in the sequencing run, such as adapter contamination, low complexity library or low growing material. A standard procedure is to check the quality of the reads and identify problems before basic analysis. Quality control check can affect the downstream analysis of the project. When the sequencing files are downloaded, they can be loaded and sequencing quality analysis can be performed according to the following code:
+
+```{r}
+replicate1 <- "./TSS_R/Enriched/Replicate1/"
+replicate2 <- "./TSS_R/Enriched/Replicate2/"
+control <- "./TSS_R/Control"
+
+total_files <- list(replicate1, replicate2, control)
+
+for (i in total_files) {
+  rqc(path = i,
+    pattern = c(".fastq.gz", ".fastq"),
+    workers = multicoreWorkers(),
+    outdir = normalizePath(i),
+    file = ifelse(which(total_files %in% i)[1] != length(total_files),
+                  paste("Quality Control Report - Enriched Replicate", which(total_files %in% i)[1]),
+                  "Quality Control Report - Control Sample"))
+}
+
+```
+
+The next step is to trim and filter the data to cut off the adapters, used in the PCR and discard low quality and short length reads. For this purpose, the package *QuasR* is used, but first, an S4 object is created, to pass the required variables. After, the *TSSextractR* function is used to trim adapters, filter short and low quality reads and align the sequencing data on a reference genome. The output files of each function execution, are one sorted BAM file and one BAI file. For the alignment, the whole genome sequence of Escherichia coli and K12 MG1655 should be obtained first. This can be done from the NCBI *nucleotide* database, here: <https://www.ncbi.nlm.nih.gov/nuccore/U00096.3>.
+
+```{r}
+prepare <- setClass("prepare", slots = list(fastqFile = "character",
+                                            adapter = "character",
+                                            minLength = "numeric",
+                                            refGenome = "character",
+                                            aligner = "character",
+                                            isPaired = "logical",
+                                            complexity = "numeric"))
+
+prepareData <- new("prepare",
+                   fastqFile = c("../TSS_R/Enriched/Replicate1/Replicate1_enriched_R1_001.fastq.gz",
+                                 "../TSS_R/Enriched/Replicate2/Replicate2_enriched_R1_001.fastq.gz",
+                                 "../TSS_R/Control/Replicate1_control_R1_001.fastq.gz.fastq.gz"),
+                   adapter = "AGATCGGAAGAGCACACGTCTGAACTCCAGTCAC",
+                   minLength = 55,
+                   refGenome = "./inst/extdata/U00096.3.fasta",
+                   aligner = "Rbowtie",
+                   isPaired = FALSE,
+                   complexity = 0.5)
+
+# This TSSextractR function can trim adapters, filter short and low quality reads and align the sequencing data on a reference genome
+for (i in seq_len(3)) {
+  trimAlignAndQuality(fastq = prepareData@fastqFile[i],
+                      adapter = prepareData@adapter,
+                      minLength = prepareData@minLength,
+                      refGenome = prepareData@refGenome,
+                      aligner = prepareData@aligner,
+                      complexity = prepareData@complexity,
+                      isPaired = prepareData@isPaired,
+                      ncores = 7)
+}
+```
+
+## Transcriptomics Analysis
+
+To proceed with the analysis of TSS, the BAM files should be loaded and the corresponding BAI files ensure that exist, to visualize the data later. The following commands load BAM files and display some basic genome information.
+
+```{r}
+bamFile <- BamFile("../TSS_R/Enriched/Replicate1/Replicate1_enriched_R1_001.out_2daf3126ee1086.bam")
+bamControl <- BamFile("../TSS_R/Control/Replicate1_control_R1_001.out_24a37aa66ffa.bam")
+
+seqinfo(bamFile)
+file.exists(gsub(".bam$", ".bam.bai", dirname(bamFile$path)))
+
+```
+
+Then, follows the conversion of the BAM file into a BED file, so that each binary record of the BAM, is converted into a text record, in which they are kept the name of the chromosome, the start and end coordinates, as well as the strand to which this read belongs, using the function `bam2bedTSS`. Also, the data from the control and enriched samples are merged, in order to keep all the data from the enriched samples and only the corresponding from the control, for each genome position and strand. The final step, is the grouping the neighbor candidate TSS into 1, if its distance are smaller than `cutoff` nucleotides and have the same strand orientation.
+
+```{r}
+# Enriched Sample
+TSSenriched1 <- bam2bedTSS(bamFile)
+
+# Control Sample
+TSScontrol <- bam2bedTSS(bamControl)
+
+# ------- TSS Comparison between Enriched and Control Samples -------
+TSSfinal <- TSSenriched %>%
+  full_join(TSScontrol, by = c("start", "strand")) %>%
+  mutate_at(vars(iterations.y, RRS.y), ~replace(., is.na(.), 0)) %>%
+  filter(!is.na(iterations.x))
+
+TSSfinal <- clusterTSS(TSSfinal, cutoff = 5)
+```
+
+### Statistical Analysis
+
+Before proceeding with the statistical analysis of the data, must be taken into account, some features of the control and test sample (Cappable-seq). The sample size is considerably smaller in contrast to total RNA sequencing samples, as only specific reads of the intact 5′ ends of the genes are retained. Also, total TSSs cannot be infinite, as possibly the reads, but fixed in number, according to the number of total genes including pervasive transcription [2], which defines that usually transcription starts at many different sites in a gene. Furthermore, while in the differential gene expression analysis, the quantification was done, according to the number of reads in an entire gene region, i.e. in each gene locus, in the TSS analysis, each one is quantified according to the unit gene coordinate to which it belongs. So, a more sensitive statistical distribution should be used, which is better adapted to these data and has the smallest possible Mean Squared Error (MSE). One such distribution appears to be the *Beta Binomial Distribution*, which also belongs to the category of mixed distributions and is the conjugate prior of the negative binomial distribution. It has an additional free parameter, so a total of 4 parameters and good adaptability to numerical data, as it does not take for granted the probability of success of binomial tests in a gene coordinate. The beta-binomial model directly describes the variation in the success probabilities of the reads and thus simplifies the fitting of the model to the data and in this sense, can provide a more direct interpretation of the overdispersion in the sequencing data. So, with the following commands, the p-value can be calculated, based on the RRS values of the two samples (control and test), which expresses statistical significance.
+
+```{r}
+TSSfinal$pvalues <- ""
+TSSfinal$pvalues <- betaBinomial(TSSfinal$RRS.x, TSSfinal$RRS.y, 1e6, 1e6, ncores = 8, plot = T)
+
+```
+
+### 5' Untranslated Regions of Genes
+
+For annotation of 5' Untranslated Regions, the reference genome obtained above should be used. Alternatively, through the *BSgenome* package, any genome needed can be automatically downloaded (code in comments). From this genome, can be derived the promoter sequences, which are bounded approximately 40 bases upstream and 5 bases downstream of each potential TSS. The function `getPromoterSequencies` can retrieve these regions of each TSS, given as input 2 lists of TSS's start position and strand, respectively, the reference genome as object, the boundaries upstream and downstream of each TSS and a logical argument to plot promoter conservation using a sequence Logo plot.
+
+```{r}
+refGenome <- readDNAStringSet('./inst/extdata/U00096.3.fasta')[[1]]
+# refGenome <- BSgenome.Ecoli.NCBI.20080805$NC_000913
+
+PromoterArea <- getPromoterSequencies(TSSfinal$start,
+                                      TSSfinal$strand,
+                                      genome = refGenome,
+                                      left = 40,
+                                      right = 5,
+                                      plot = T)
+```
+
+### Transcription Start Sites Analysis
+
+To analyze statistically the dinucleotide composition of the region bounded from 1 base upstream of TSS to the TSS, can be used the function `dinucleotideTSS`, which takes as input 3 lists of TSS's start position, strand and RRS score of the Cappable-seq, respectively and the reference genome. This function calculates the purine (R) / pyrimidine (Y) model combinations and stores in a Dataframe the dinucleotide sequences.
+
+```{r}
+purpyr <- dinucleotideTSS(TSSfinal$start,
+                          TSSfinal$strand,
+                          TSSfinal$RRS.x,
+                          refGenome,
+                          plots = T)
+TSSfinal$PP <- purpyr$PP
+TSSfinal$dints <- purpyr$dints
+
+```
+
+The statistically significant TSS can be categorized into 5 categories, according to their location and orientation, between or within genes. These categories are described below:
+
+-   Upstream: those located before the start codon of mRNAs or before the 5′ end of non-coding RNAs, at a distance of less than 550 nucleotides from these regions.
+
+-   Internal: those located inside an annotated gene, at any direction. This category requires special care, because if a TSS is internal to an upstream gene, but is less than 550 bases from a homologous downstream and neighboring gene, then that TSS will be considered upstream of that and not internal, showing overlap of promoters with another gene.
+
+-   Sense: if the orientation of the TSS is consistent with the existing gene at the corresponding position. If the TSS is upstream of a gene, then the direction is taken according to the nearest downstream gene. If there are genes with different orientations, i.e. genes located in different strand, then the measure is considered to be the gene with the same orientation with the TSS, as is also the case with overlapping genes of a strand, i.e. genes that present overlapping, mainly due to insertion of sequences (mutagenesis).
+
+-   Antisense: if the orientation of the TSS is opposite to that of the gene. Corresponding to the previous case, if there are genes with different orientations, then the gene with the same orientation with the TSS is considered as a measure, as is the case with overlapping genes. A TSS will only be antisense, if there is no sense gene nearby that can be associated with it.
+
+-   Orphans: those located upstream and at a distance greater than 550 nucleotides from the start position of any neighboring gene. In this case, it is considered that there is no annotated gene in proximity to the TSS, so the latter is categorized as an orphan TSS.
+
+The `annotateTSS` function, can categorize all the TSS into the above categories, based on a gene list, that can be derived from annotation databases. For this reason, the gene annotation are first downloaded from the *RegulonDB* and *EcoCyc* databases and these data are combined to derive a consensus annotation for Escherichia Coli, that can be found [here](https://uthnoc-my.sharepoint.com/:f:/g/personal/dakonstantinos_o365_uth_gr/EscRd-ehu51DrOnAOHJC4tkBl0oIIMQW_mVpgf6NYQ0ItA?e=rHBv4Y) (supplementary file `GeneList.csv`).
+
+`annotateRNA` function, can annotate RNAs in categories: coding (mRNA) ans non-coding (other RNA). This function takes as input a file containing all names from non-coding RNAs (small or tRNAs) and it compares the file gene names with the annotated gene names from `annotateTSS` function. This file can be derived from [EcoCyc Query Search](https://biocyc.org/query.shtml), searching for "RNAs" with "gene" and "name" as columns (Supplementary file: `ncRNAs.txt`).
+
+```{r}
+TSSfinal <- annotateTSS(TSSfinal, GeneList, plot = T)
+
+TSSfinal$type = ""
+TSSfinal$type <- annotateRNA(TSSfinal, "./inst/extdata/ncRNAs.txt")
+
+```
+
+### Small RNA Annotation
+
+To isolate and analyze small RNAs, we reload the non-coding RNA file and perform filtering to retain only records, containing the keywords "small" and "regulatory". Comparison of these small RNAs with Cappable-seq data, as well as further manual annotation through databases and literature, led to the characterization of 51 small RNAs with *trans* regulatory action and 21 with *cis* action (`Thesis Supplementary files.pdf`).
+
+```{r}
+nc_rnas <- read_delim("./inst/extdata/ncRNAs.txt", delim = "\t",
+                      escape_double = False, col_names = FALSE,
+                      trim_ws = TRUE)
+nc_rnas <- na.omit(nc_rnas)
+
+smallRNA <- nc_rnas %>% filter(grepl("small", X2) | grepl("regulatory", X2))
+
+smallRNA <- TSSfinal %>% filter(genes %in% smallRNA$X1)
+cisRNA <- unique(smallRNA %>% filter(orientation == "S") %>% pull(genes))
+transRNA <- unique(smallRNA %>% filter(orientation == "AS") %>% pull(genes))
+```
+
+### 5' Untranslated Regions of mRNAs
+
+5' untranslated regions of mRNAs are delimited from the TSS to the translation initiation codon and have been shown to determine the translation efficiency of mRNAs through their variable length. In order to be able to extract these regions from the mRNAs, has written a program in R, which assigns to the annotated TSSs, the gene they allegedly correspond to, so by comparing them with the non-coding RNA file, it can be ascertained whether they are protein coding gene or not. By taking only the Upstream and Sense TSSs, corresponding to mRNA-producing gene, this region can be extracted from the reference genome and common motifs can be identified, the Shine--Dalgarno region, as well as Leaderless mRNA and thus, can reliable conclusions can be drawn about the length distribution of this region. The following functions produce the conservation plots for these regions (motifs). The latter function (`analyzeLeaderlessRNA`) returns a list of mRNAs that have a 5' untranslated region of less than 10 bases, indicating a different translational methodology, which are most similar to the Archaeal translational machinery. Finally, the file `GeneProductSet` can be found from RegulonDB database, by selecting the Experimental genes dataset (<http://regulondb.ccg.unam.mx/menu/download/datasets/files/GeneProductSet.txt>). It contains the name of each gene, with its short functional annotation.
+
+```{r}
+TSS_5UTR <- getRNA5UTRsequencies(TSSfinal, refGenome, GeneList, plot = T)
+
+sd_area <- getShineDalgarnoSequencies(TSS_5UTR, plot = T)
+
+plotTSSperCategory(TSSfinal, refGenome)
+
+
+GeneProductSet <- read.delim(file = "./inst/extdata/GeneProductSet.txt",
+                             header = FALSE,
+                             sep = "\t",
+                             comment.char = "#",
+                             na.strings = "")
+colnames(GeneProductSet) <- c("gene", "ann")
+
+leaderless <- analyzeLeaderlessRNA(TSSfinal, TSS_5UTR, GeneProductSet)
+```
+
+### TSS Preference
+
+The analysis of TSS preference can reveal transcriptional events, or even lead to better annotation of genes. TSSs with the same orientation as the genes tend to show a dominant position at the beginning of the genes, as well as with a slightly lower tendency in the 3' region of them. Also, the positions of oppositely oriented internal TSSs tend to be more evenly distributed throughout the length of the genes. Analysis of the position of TSSs in the coding genes has shown that there is a preference for sense and antisense TSSs, to be located mainly in the first position and with a lesser probability in the second and third positions, regarding the triplet step of the open reading frame, i.e. relative to the codon position they belong to within an open reading frame. These TSS preferences, can be calculated and visualized with `plotTSSpreference` function.
+
+Finally, keeping only the representative TSS of each gene, i.e. the one that is upstream, sense and corresponds to their smallest p-value, 1,900 TSSs were obtained from the given sequencing data (`getRepresentativeTSS` function).
+
+```{r}
+# Add Gene annotation column
+TSS_5UTR$ann = ""
+for (i in seq_len(nrow(TSS_5UTR))) {
+  if (length(GeneProductSet$ann[which(GeneProductSet$gene == TSSfinal$genes[which(TSSfinal$start == TSS_5UTR$TSSpos[i])])]) > 0) {
+    TSS_5UTR$ann[i] = GeneProductSet$ann[which(GeneProductSet$gene == TSSfinal$genes[which(TSSfinal$start == TSS_5UTR$TSSpos[i])])][1]
+  }
+}
+
+# Retrieve TSS with its coding gene related with terms "nucleosidase" or "nucleotidase"
+TSS_5UTR %>% filter(grepl("nucleosidase", ann) | grepl("nucleotidase", ann)) %>% count(distances > 110)
+
+
+plotTSSpreference(TSSfinal, GeneList)
+
+RepresentativeTSS <- getRepresentativeTSS(TSSfinal, plot = T, genome)
+```
+
+### Operon Annotation
+
+Genes that are involved in a common metabolic pathway or have an identical biological function are often arranged in operons, with a common promoter. TSS data obtained by analyzing Cappable-seq data identify these promoters and thus can define the start site of operons. To ascertain whether the genes, and by extension the TSSs assigned to them, belong to an operon, consensus annotation from the RegulonDB and ODB4 databases was used (Supplementary file `operonsAnnotation.csv`). The first function assign an existing operon for each TSS and adds one column representing the operon name and one column with the total number of genes of this operon. The second function, calculates the distribution of distances of upstream and sense TSSs from the start site of the mapped operons. Also, it calculates the distribution of the number of TSSs, which are sense and antisense, regarding to their orientation and position in the operon they belong to, expressed as a percentage.
+
+```{r}
+# ------- Operon Analysis -------
+TSSfinal <- assignOperons(TSSfinal, operons)
+
+plotOperonPreference(TSSfinal, operons)
+```
+
+## Microbiome TSS Analysis
+
+A major challenge facing the bioinformatics analysis of sequencing data from microbial communities, was the identification of sample composition. More specifically, the identification of the bacteria belonging to a given sample (genome assembly and binning) is of major importance for the subsequent analysis and manipulation of metagenomics data. Once potential organisms have been identified with genus or species precision, the data can then be mapped to each reference or representative genome and the above analysis of the first part of the methodology can be applied, as in Escherichia Coli. To achieve the above purpose, the protocol defined by the sequencing of the 16S ribosomal subunit gene should first be followed, so that based on its conservation and sequence, the candidate bacterial genera can be identified. The solution to this problem has been provided by two new methodologies, called Operational Taxonomic Units (OTUs) and Amplicon Sequence Variants (ASVs), which are based on mathematics and statistics. More specifically, they are based on the clustering of the data, taking into account that organisms that are phylogenetically at a short distance, will have greater maintenance in the 16S rRNA gene. In this way, sequence errors are considered as outliers and have an almost insignificant contribution to the consensus sequence of each cluster. In the OTUs methodology, a similarity threshold of 97% of the compared sequence length is usually considered [3]. However, according to the calibration of this model, this threshold is not sufficient to compare phylogenetically very close species, thus leading in some cases to the clustering of different organisms into the same cluster. Conversely, a larger threshold may not ignore sequence errors and the accuracy in clustering reliability may decrease, introducing spurious sequences as new species [4]. The main problem in the management of these data remains the lack of prior knowledge, even limited, of the microflora that may be contained in the sample. For this reason, the OTUs method can sometimes give an accurate approximation of organisms if they have a clear phylogenetic distance, while it can give biased and inaccurate results when this distance is small [5]. In contrast to OTUs, the methodology of ASVs determines which sequences were read and how many times they were read, in order to determine, based on an error function, the probability that a given read, which has a given frequency, is not due to a sequencing error, i.e. to coincidental similarity. Thus, a p-value is created for each sequence and by applying a threshold as a confidence interval, only the statistically significant sequences can be retained. These can later be compared to target genes, i.e. 16S rRNA, and ascertain which organisms are contained in the sample, in silico [6]. According to the above, for the analysis of the metagenome in a sequencing files, the ASVs protocol was used and the analysis was done in R, with the `Dada2` package [6, 7], the which provides one of the most widely used workflows for high-fidelity analyzes of sequencing data of amplicon variants. This package includes a workflow of analyzes from the also known `Qiime2` tool and the workflow starts, as in basic sequencing analysis, with the filtering and trimming of primers (`microbiomeTrimAndQuality` function). Also, FastQ files are converted to Fasta files, which contain only the sequences of the reads, removing all other information, and then a dereplication of the new data is performed, according to which only the unique reads are kept, leading to the rejection of multiple copies. The flow continues by removing sequences, known as chimeras, which are erroneous PCR-derived sequences by joining two or more sequences that have not successfully completed their extension by DNA polymerase. As a result of this, a partially extended strand can be ligated to the template of some other sequence, the partially extended strand acting as a primer, and polymerization forming a chimeric sequence. This fact leads to the generation of noise, if it is taken into account that this incorrect sequence can be copied in subsequent cycles, increasing the error. Chimeric sequences are observed quite often in mixed sequencing samples and it is important to remove them so as not to affect reads corresponding to 16S rRNA genes [8].
+
+After the preparation and pre-processing of the sequencing data, should be identified the microbial communities, i.e. the calculation of α-diversity, as well as the calculation of β-diversity, for the precise quantitative identification of these species. The specific assessment is done by categorizing the reads, based on their mismatches, with a set containing the sequences of the 16S rRNA genes. For this purpose, a particular version of the Naive Bayes Classifier [9], which compares these mutations with a training set obtained from the Ribosomal database, is quite popular in the literature. Database Project (RDP) (RDP v18 training set [10]). More specifically, the feature space of this classifier is usually each 8-mer subsequence of the reads, under the k-mers algorithm and each total number of these 8-mer words is used to calculate the expected probability of belonging to gene of the 16S ribosomal subunit and by extension the possibility of belonging to a specific bacterial genus. In this way, this particular methodology is quite accurate in its predictions, because it does not rely on arbitrary score values, as is done in sequence alignment, and has a solid mathematical background.
+
+Finally, using the `createCompositionPlots` function, the phylogenetic tree obtained by the neighbour-join algorithm can be calculated and represented, as well as the microbial composition plots of the sample.
+
+```{r}
+# ------- Microbiome TSS Analysis -------
+microbiomeTrimAndQuality("./mouse_microbiome",
+                         adapters = "AGATCGGAAGAGCACACGTCTGAACTCCAGTCAC",
+                         minLength = 50,
+                         trucnLength = 50,
+                         minQuality = 10,
+                         trancQuality = 10,
+                         ncluster = 5)
+
+taxonomies <- assignTaxonmies(file.path(mi_path, paste0(samplenames, "_filt.fastq.gz")),
+                              rdp_train_set = "./data/rdp_train_set_18.fa.gz",
+                              pool = T,
+                              plot = T,
+                              multithread = T)
+
+ps <- createCompositionPlots(taxonomies$taxa, taxonomies$noChim, plot = T)
+```
+
+The above analysis was applied to two microbial replicate samples and resulted in the identification of 6 major microbial species: Escherichia Coli MG1655, Oscillibacter valericigenes, Staphylococcus aureus, Blautia marasmi, Faecalicatena contorta & [Clostridium] indolis DSM 755, whose most representative genome , was used to align the data. In more detail, bacterial species whose reference genome is not available, but only many and different assemblies, which show less accuracy than the reference genomes, have the so-called representative genome, which is, in short, the most reliable genome of all the assemblies with based on certain eligibility criteria, such as the number of pseudocoding regions, the presence of a plasmid, and others. Additionally, in bacterial species that do not even have a representative genome, a random genome (contig) was used for alignment, usually one of those with the longest sequence length. The genome files for each species separately are provided with this paper (see supplementary files). After alignment, mapped reads were transformed, keeping only the first base from their 5′ end as a candidate TSS. These data were annotated for each bacterium separately, using the same bioinformatics workflow of the first part of the methodology.
+
+```{r}
+
+for (genome in c("./data/microbial genomes/Blautia_marasmi.fna",
+            "./data/microbial genomes/Faecalicatena_contorta.fna",
+            "./data/microbial genomes/indolis_DSM_755.fna",
+            "./data/microbial genomes/Oscillibacter.fasta",
+            "./data/microbial genomes/Staphylococcus_aureus.fasta",
+            "./data/U00096.3.fasta")) {
+  align2refGenome(file.path(mi_path, paste0(samplenames, "_filt.fastq.gz")),
+                  genome = genome,
+                  aligner = "Rbowtie",
+                  pair_end = F,
+                  parameters= "-l 28",
+                  nclusters = 5)
+}
+
+blautia <- analyzeTSSmicrobes(c("./mouse_microbiome/idx2_filt_Blautia_marasmi.bam",
+                                "./mouse_microbiome/idx6_filt_Blautia_marasmi.bam"))
+faecalicatena <- analyzeTSSmicrobes(c("./mouse_microbiome/idx2_filt_Faecalicatena_contorta.bam",
+                                      "./mouse_microbiome/idx6_filt_Faecalicatena_contorta.bam"))
+indolis <- analyzeTSSmicrobes(c("./mouse_microbiome/idx2_filt_indolis_DSM_755.bam",
+                                "./mouse_microbiome/idx6_filt_indolis_DSM_755.bam"))
+staphylococcus <- analyzeTSSmicrobes(c("./mouse_microbiome/idx2_filt_Staphylococcus_aureus.bam",
+                                       "./mouse_microbiome/idx6_filt_Staphylococcus_aureus.bam"))
+oscillibacter <- analyzeTSSmicrobes(c("./mouse_microbiome/idx2_filt_Oscillibacter.bam",
+                                      "./mouse_microbiome/idx6_filt_Oscillibacter.bam"))
+ecoli <- analyzeTSSmicrobes(c("./mouse_microbiome/idx2_filt_U00096.3.bam",
+                              "./mouse_microbiome/idx6_filt_U00096.3.bam"))
+
+getN <- function(x) sum(getUniques(x))
+track <- cbind(out, sapply(taxonomies$dada, getN), sapply(taxonomies$allSeqs, getN), rowSums(taxonomies$noChim))
+colnames(track) <- c("input", "filtered", "denoisedF", "merged", "nonchim")
+rownames(track) <- sample.names
+head(track)
+```
+
+Analysis of the 6 sequence files (one for each bacterium) revealed a total of 12,530 TSS, of which 2.015 correspond to the bacterium Blautia marasmi, 1.580 to Oscillibacter valericigenes, 3.870 to Escherichia Coli MG1655, 1.250 to Faecalicatena contorta , 2.807 in indolis DSM 755 and the remaining 1.008 in Staphylococcus aureus. Clustering of the data was done using a clustering value of 10, instead of the 5 used above, to eliminate very close TSSs in a more stringent manner, as there is no longer a control sample for data comparison and statistical inference. The specific TSSs were annotated for each species individually, regarding their orientation and location and orientation, and mapped to genes, just as was done in the first part of the methodology.
+
+## References
+
+1.  Ettwiller, L., Buswell, J., Yigit, E. et al. A novel enrichment strategy reveals unprecedented number of novel transcription start sites at single base resolution in a model prokaryote and the gut microbiome. BMC Genomics 17, 199 (2016). <https://doi.org/10.1186/s12864-016-2539-z>
+
+2.  Hong-Leong Cheah, Carsten A. Raabe, Li-Pin Lee, Timofey S. Rozhdestvensky, Marimuthu Citartan, Siti Aminah Ahmed, Thean-Hock Tang. (2018) Bacterial regulatory RNAs: complexity, function, and putative drug targeting. Critical Reviews in Biochemistry and Molecular Biology 53:4, pages 335-355.
+
+3.  Blaxter, Mark, Jenna Mann, Tom Chapman, Fran Thomas, Claire Whitton, Robin Floyd, and Eyualem Abebe (2005). «Defining operational taxonomic units using DNA barcode data». In: Philosophical Transactions of the Royal Society B: Biological Sciences 360.1462, pp. 1935--1943. doi: 10.1098/rstb.2005.1725. url: <https://royalsocietypublishing.org/doi/abs/10.1098/rstb.2005.1725.>
+
+4.  Kunin, Victor, Anna Engelbrektson, Howard Ochman, and Philip Hugenholtz (2010). «Wrinkles in the rare biosphere: pyrosequencing errors can lead to artificial inflation of diversity estimates». In: Environmental Microbiology 12.1, pp. 118--123. doi: <https://doi.org/10.1111/j.1462-2920.2009.02051.x>
+
+5.  Edgar, Robert (Oct. 2017). «Accuracy of microbial community diversity estimated by closed- and open-reference OTUs». In: PeerJ 5, e3889. doi: 10.7717/peerj.3889
+
+6.  Callahan, Benjamin J, Joan Wong, Cheryl Heiner, Steve Oh, Casey M Theriot, Ajay S Gulati, Sarah K McGill, and Michael K Dougherty (July 2019). «High-throughput amplicon sequencing of the full-length 16S rRNA gene with single-nucleotide resolution». In: Nucleic Acids Research 47.18, e103--e103. issn: 0305-1048. doi: 10.1093/nar/gkz569. url: <https://doi.org/10.1093/nar/gkz569>
+
+7.  Callahan, Benjamin, Paul Mcmurdie, Michael Rosen, Andrew Han, Amy Jo Johnson, and Susan Holmes (Apr. 2016). «DADA2: High resolution sample inference from amplicon data». In: doi: <https://doi.org/10.1038/nmeth.3869>
+
+8.  Haas, Brian J., Dirk Gevers, Ashlee M. Earl, et al. (2011). «Chimeric 16S rRNA sequence formation and detection in Sanger and 454-pyrosequenced PCR amplicons». In: Genome Research 21.3, pp. 494--504. issn: 1088-9051. doi: 10.1101/gr.112730.110. url: <https://dx.doi.org/10.1101/gr.112730.110>
+
+9.  Wang, Qiong, George M. Garrity, James M. Tiedje, and James R. Cole (2007). «Naive Bayesian Classifier for Rapid Assignment of rRNA Sequences into the New Bacterial Taxonomy». In: Applied and Environmental Microbiology 73.16, pp. 5261--5267. doi: 10.1128/AEM.00062-07. url: <https://journals.asm.org/doi/abs/10.1128/AEM.00062-07>
+
+10. Cole, James R., Qiong Wang, Jordan A. Fish, et al. (Nov. 2013). «Ribosomal Database Project: data and tools for high throughput rRNA analysis». In: Nucleic Acids Research 42.D1, pp. D633--D642. issn: 0305-1048. doi: 10.1093/nar/gkt1244. url: <https://doi.org/10.1093/nar/gkt1244>
+
+## Contact
+
+Bug reports, questions and suggestions are welcome and appreciated.
+
+-   **Author:** Daniilidis Konstantinos
+
+-   **Contact:** [daniilidis\@ieee.org](mailto:daniilidis@ieee.org){.email}
+
+-   **Affiliations:** [*Computer Science and Biomedical Informatics, University of Thessaly*](http://dib.uth.gr/) and [*Diana Lab*](http://www.dianalab.gr/)
