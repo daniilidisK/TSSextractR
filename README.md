@@ -31,6 +31,7 @@ if(!require("devtools")) {
   library(devtools)
   install_github("daniilidisK/TSSextractR")
 }
+library(TSSextractR)
 ```
 
 ## References
